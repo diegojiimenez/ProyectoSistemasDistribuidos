@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using HotelManagement.API.Data;
 using HotelManagement.API.Repositories;
 using HotelManagement.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Puertos comunes de React/Vite
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Puertos comunes de React
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -21,6 +24,23 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<HotelDbContext>(options =>
     options.UseInMemoryDatabase("HotelDB"));
 
+// Configurar JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
 // Registrar Repositorios
 builder.Services.AddScoped<IHuespedRepository, HuespedRepository>();
 builder.Services.AddScoped<ICuartoRepository, CuartoRepository>();
@@ -30,6 +50,7 @@ builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 builder.Services.AddScoped<IHuespedService, HuespedService>();
 builder.Services.AddScoped<ICuartoService, CuartoService>();
 builder.Services.AddScoped<IReservaService, ReservaService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Agregar controladores
 builder.Services.AddControllers();
@@ -47,6 +68,31 @@ builder.Services.AddSwaggerGen(c =>
         {
             Name = "Sistema de Gestión Hotelera",
             Email = "info@hotelapi.com"
+        }
+    });
+
+    // Configurar JWT en Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header usando el esquema Bearer. Ejemplo: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
         }
     });
 
@@ -84,6 +130,7 @@ app.UseCors("AllowReact");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // IMPORTANTE: Antes de UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();

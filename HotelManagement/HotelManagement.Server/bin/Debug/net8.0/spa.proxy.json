@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:33820",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\diego\\Documents\\ProyectoSistemasDistribuidos\\ProyectoSistemasDistribuidos\\HotelManagement\\HotelManagement.Server\\..\\hotelmanagement.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

@@ -4,45 +4,60 @@ using HotelManagement.API.Models;
 namespace HotelManagement.API.DTOs
 {
     // ============ DTOs para Huésped ============
-    
+
     public class HuespedCreateDTO
     {
         [Required(ErrorMessage = "El nombre es obligatorio")]
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El apellido es obligatorio")]
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "El apellido no puede exceder los 100 caracteres")]
         public string Apellido { get; set; }
 
-        [Required(ErrorMessage = "El email es obligatorio")]
-        [EmailAddress(ErrorMessage = "Email no válido")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "El correo electrónico es obligatorio")]
+        [EmailAddress(ErrorMessage = "El formato del correo no es válido")]
+        [StringLength(150, ErrorMessage = "El correo no puede exceder los 150 caracteres")]
+        public string CorreoElectronico { get; set; }
 
         [Required(ErrorMessage = "El teléfono es obligatorio")]
-        [Phone(ErrorMessage = "Teléfono no válido")]
+        [Phone(ErrorMessage = "El formato del teléfono no es válido")]
+        [StringLength(20, ErrorMessage = "El teléfono no puede exceder los 20 caracteres")]
         public string Telefono { get; set; }
 
         [Required(ErrorMessage = "El documento de identidad es obligatorio")]
+        [StringLength(20, ErrorMessage = "El documento no puede exceder los 20 caracteres")]
         public string DocumentoIdentidad { get; set; }
 
+        [StringLength(200, ErrorMessage = "La dirección no puede exceder los 200 caracteres")]
         public string Direccion { get; set; }
     }
 
     public class HuespedUpdateDTO
     {
-        [StringLength(100)]
+        [Required(ErrorMessage = "El nombre es obligatorio")]
+        [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres")]
         public string Nombre { get; set; }
 
-        [StringLength(100)]
+        [Required(ErrorMessage = "El apellido es obligatorio")]
+        [StringLength(100, ErrorMessage = "El apellido no puede exceder los 100 caracteres")]
         public string Apellido { get; set; }
 
-        [EmailAddress]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "El correo electrónico es obligatorio")]
+        [EmailAddress(ErrorMessage = "El formato del correo no es válido")]
+        [StringLength(150, ErrorMessage = "El correo no puede exceder los 150 caracteres")]
+        public string CorreoElectronico { get; set; }
 
-        [Phone]
+        [Required(ErrorMessage = "El teléfono es obligatorio")]
+        [Phone(ErrorMessage = "El formato del teléfono no es válido")]
+        [StringLength(20, ErrorMessage = "El teléfono no puede exceder los 20 caracteres")]
         public string Telefono { get; set; }
 
+        [Required(ErrorMessage = "El documento de identidad es obligatorio")]
+        [StringLength(20, ErrorMessage = "El documento no puede exceder los 20 caracteres")]
+        public string DocumentoIdentidad { get; set; }
+
+        [StringLength(200, ErrorMessage = "La dirección no puede exceder los 200 caracteres")]
         public string Direccion { get; set; }
     }
 
@@ -51,13 +66,12 @@ namespace HotelManagement.API.DTOs
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public string NombreCompleto => $"{Nombre} {Apellido}";
-        public string Email { get; set; }
+        public string CorreoElectronico { get; set; }
         public string Telefono { get; set; }
         public string DocumentoIdentidad { get; set; }
         public string Direccion { get; set; }
         public DateTime FechaRegistro { get; set; }
-        public int NumeroReservas { get; set; }
+        public int NumeroReservas { get; set; } // Agregar esta propiedad
     }
 
     // ============ DTOs para Cuarto ============

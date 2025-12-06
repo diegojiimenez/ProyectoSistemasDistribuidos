@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using HotelManagement.API.Services;
 using HotelManagement.API.DTOs;
 
@@ -9,6 +10,7 @@ namespace HotelManagement.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Requiere autenticación para todos los endpoints
     public class HuespedesController : ControllerBase
     {
         private readonly IHuespedService _service;
@@ -24,6 +26,7 @@ namespace HotelManagement.API.Controllers
         /// <returns>Lista de huéspedes</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<List<HuespedResponseDTO>>), 200)]
+        [ProducesResponseType(401)] // No autorizado
         public async Task<IActionResult> GetAll()
         {
             var response = await _service.GetAllHuespedesAsync();
@@ -38,6 +41,7 @@ namespace HotelManagement.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiResponse<HuespedResponseDTO>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _service.GetHuespedByIdAsync(id);
@@ -49,13 +53,16 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Crea un nuevo huésped
+        /// Crea un nuevo huésped (Solo Administradores)
         /// </summary>
         /// <param name="dto">Datos del huésped a crear</param>
         /// <returns>Huésped creado</returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")] // Solo administradores pueden crear
         [ProducesResponseType(typeof(ApiResponse<HuespedResponseDTO>), 201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)] // Prohibido
         public async Task<IActionResult> Create([FromBody] HuespedCreateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -70,15 +77,18 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Actualiza un huésped existente
+        /// Actualiza un huésped existente (Solo Administradores)
         /// </summary>
         /// <param name="id">ID del huésped</param>
         /// <param name="dto">Datos a actualizar</param>
         /// <returns>Huésped actualizado</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<HuespedResponseDTO>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Update(int id, [FromBody] HuespedUpdateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -93,13 +103,16 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Elimina un huésped
+        /// Elimina un huésped (Solo Administradores)
         /// </summary>
         /// <param name="id">ID del huésped</param>
         /// <returns>Resultado de la operación</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _service.DeleteHuespedAsync(id);
@@ -116,6 +129,7 @@ namespace HotelManagement.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Requiere autenticación para todos los endpoints
     public class CuartosController : ControllerBase
     {
         private readonly ICuartoService _service;
@@ -131,6 +145,7 @@ namespace HotelManagement.API.Controllers
         /// <returns>Lista de cuartos</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<List<CuartoResponseDTO>>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _service.GetAllCuartosAsync();
@@ -143,6 +158,7 @@ namespace HotelManagement.API.Controllers
         /// <returns>Lista de cuartos disponibles</returns>
         [HttpGet("disponibles")]
         [ProducesResponseType(typeof(ApiResponse<List<CuartoResponseDTO>>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetDisponibles()
         {
             var response = await _service.GetCuartosDisponiblesAsync();
@@ -157,6 +173,7 @@ namespace HotelManagement.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiResponse<CuartoResponseDTO>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _service.GetCuartoByIdAsync(id);
@@ -168,13 +185,16 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Crea un nuevo cuarto
+        /// Crea un nuevo cuarto (Solo Administradores)
         /// </summary>
         /// <param name="dto">Datos del cuarto a crear</param>
         /// <returns>Cuarto creado</returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<CuartoResponseDTO>), 201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Create([FromBody] CuartoCreateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -189,15 +209,18 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Actualiza un cuarto existente
+        /// Actualiza un cuarto existente (Solo Administradores)
         /// </summary>
         /// <param name="id">ID del cuarto</param>
         /// <param name="dto">Datos a actualizar</param>
         /// <returns>Cuarto actualizado</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<CuartoResponseDTO>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Update(int id, [FromBody] CuartoUpdateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -212,13 +235,16 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Elimina un cuarto
+        /// Elimina un cuarto (Solo Administradores)
         /// </summary>
         /// <param name="id">ID del cuarto</param>
         /// <returns>Resultado de la operación</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _service.DeleteCuartoAsync(id);
@@ -235,6 +261,7 @@ namespace HotelManagement.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Requiere autenticación para todos los endpoints
     public class ReservasController : ControllerBase
     {
         private readonly IReservaService _service;
@@ -245,11 +272,14 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Obtiene todas las reservas
+        /// Obtiene todas las reservas (Solo Administradores)
         /// </summary>
         /// <returns>Lista de reservas</returns>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<List<ReservaResponseDTO>>), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _service.GetAllReservasAsync();
@@ -264,6 +294,7 @@ namespace HotelManagement.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiResponse<ReservaResponseDTO>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _service.GetReservaByIdAsync(id);
@@ -281,6 +312,7 @@ namespace HotelManagement.API.Controllers
         /// <returns>Lista de reservas del huésped</returns>
         [HttpGet("huesped/{huespedId}")]
         [ProducesResponseType(typeof(ApiResponse<List<ReservaResponseDTO>>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetByHuesped(int huespedId)
         {
             var response = await _service.GetReservasByHuespedAsync(huespedId);
@@ -295,6 +327,7 @@ namespace HotelManagement.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<ReservaResponseDTO>), 201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Create([FromBody] ReservaCreateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -318,6 +351,7 @@ namespace HotelManagement.API.Controllers
         [ProducesResponseType(typeof(ApiResponse<ReservaResponseDTO>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Update(int id, [FromBody] ReservaUpdateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -339,6 +373,7 @@ namespace HotelManagement.API.Controllers
         [HttpPatch("{id}/cancelar")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Cancelar(int id)
         {
             var response = await _service.CancelarReservaAsync(id);
@@ -350,13 +385,16 @@ namespace HotelManagement.API.Controllers
         }
 
         /// <summary>
-        /// Elimina una reserva
+        /// Elimina una reserva (Solo Administradores)
         /// </summary>
         /// <param name="id">ID de la reserva</param>
         /// <returns>Resultado de la operación</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _service.DeleteReservaAsync(id);

@@ -92,17 +92,18 @@ namespace HotelManagement.API.Services
                     return ApiResponse<HuespedResponseDTO>.Error("Ya existe un huésped con ese documento");
 
                 // Validar que no exista el email
-                if (await _repository.ExistsEmailAsync(dto.Email))
+                if (await _repository.ExistsEmailAsync(dto.CorreoElectronico))
                     return ApiResponse<HuespedResponseDTO>.Error("Ya existe un huésped con ese email");
 
                 var huesped = new Huesped
                 {
                     Nombre = dto.Nombre,
                     Apellido = dto.Apellido,
-                    Email = dto.Email,
+                    Email = dto.CorreoElectronico,
                     Telefono = dto.Telefono,
                     DocumentoIdentidad = dto.DocumentoIdentidad,
-                    Direccion = dto.Direccion
+                    Direccion = dto.Direccion,
+                    FechaRegistro = DateTime.Now
                 };
 
                 var created = await _repository.CreateAsync(huesped);
@@ -125,22 +126,21 @@ namespace HotelManagement.API.Services
             try
             {
                 var huesped = await _repository.GetByIdAsync(id);
-                if (huesped == null)
-                    return ApiResponse<HuespedResponseDTO>.Error("Huésped no encontrado");
 
-                // Actualizar solo los campos que vienen en el DTO
-                if (!string.IsNullOrWhiteSpace(dto.Nombre))
-                    huesped.Nombre = dto.Nombre;
-                if (!string.IsNullOrWhiteSpace(dto.Apellido))
-                    huesped.Apellido = dto.Apellido;
-                if (!string.IsNullOrWhiteSpace(dto.Email))
-                    huesped.Email = dto.Email;
-                if (!string.IsNullOrWhiteSpace(dto.Telefono))
-                    huesped.Telefono = dto.Telefono;
-                if (!string.IsNullOrWhiteSpace(dto.Direccion))
-                    huesped.Direccion = dto.Direccion;
+                if (huesped == null)
+                {
+                    return ApiResponse<HuespedResponseDTO>.Error("Huésped no encontrado");
+                }
+
+                huesped.Nombre = dto.Nombre;
+                huesped.Apellido = dto.Apellido;
+                huesped.Email = dto.CorreoElectronico;
+                huesped.Telefono = dto.Telefono;
+                huesped.DocumentoIdentidad = dto.DocumentoIdentidad;
+                huesped.Direccion = dto.Direccion;
 
                 var updated = await _repository.UpdateAsync(huesped);
+
                 return ApiResponse<HuespedResponseDTO>.Success(
                     MapToResponseDTO(updated),
                     "Huésped actualizado exitosamente"
@@ -186,7 +186,7 @@ namespace HotelManagement.API.Services
                 Id = huesped.Id,
                 Nombre = huesped.Nombre,
                 Apellido = huesped.Apellido,
-                Email = huesped.Email,
+                CorreoElectronico = huesped.Email, // También llenar CorreoElectronico
                 Telefono = huesped.Telefono,
                 DocumentoIdentidad = huesped.DocumentoIdentidad,
                 Direccion = huesped.Direccion,

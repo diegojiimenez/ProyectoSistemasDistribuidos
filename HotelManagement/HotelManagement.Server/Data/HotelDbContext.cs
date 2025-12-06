@@ -12,6 +12,7 @@ namespace HotelManagement.API.Data
         public DbSet<Huesped> Huespedes { get; set; }
         public DbSet<Cuarto> Cuartos { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
