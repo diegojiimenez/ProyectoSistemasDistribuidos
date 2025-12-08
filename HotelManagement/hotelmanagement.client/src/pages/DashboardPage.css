@@ -1,2 +1,177 @@
-/* Dashboard Page Styles - Migrated to Chakra UI components */
-/* No longer using custom CSS - all styling is handled by Chakra UI (DashboardPage.tsx uses Box, Flex, Card, etc.) */
+/* Dashboard Page Container */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* Dashboard Layout */
+.dashboard-layout {
+  display: flex;
+  flex: 1;
+}
+
+/* Main Content Area */
+.dashboard-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Dashboard Title */
+.dashboard-title-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid black;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Welcome Card */
+.welcome-card {
+  background-color: white;
+  padding: 2rem;
+  border: 2px solid black;
+  border-radius: 0;
+  margin-bottom: 2rem;
+}
+
+.welcome-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Mission & Vision Grid */
+.mission-vision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.mission-card,
+.vision-card {
+  background-color: white;
+  padding: 1.5rem;
+  border: 1px solid black;
+  border-radius: 0;
+}
+
+.mission-card h3,
+.vision-card h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.mission-card p,
+.vision-card p {
+  color: #4b5563;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border: 1px solid black;
+}
+
+.stat-card {
+  background-color: white;
+  padding: 1rem;
+  border-right: 1px solid black;
+  border-radius: 0;
+  text-align: center;
+}
+
+.stat-card:last-child {
+  border-right: none;
+}
+
+.stat-card-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card-change {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.stat-change-positive {
+  color: #059669;
+}
+
+.stat-change-negative {
+  color: #dc2626;
+}
+
+/* Charts Area */
+.charts-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: white;
+  border: 1px solid black;
+  min-height: 300px;
+}
+
+.chart-container {
+  width: 100%;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.chart-placeholder {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
