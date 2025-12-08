@@ -4317,23 +4317,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\diego\\.nuget\\packages\\": {},
+    "C:\\Users\\bryan\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\diego\\Documents\\ProyectoSistemasDistribuidos\\ProyectoSistemasDistribuidos\\HotelManagement\\HotelManagement.Server\\HotelManagement.Server.csproj",
+      "projectUniqueName": "C:\\Users\\bryan\\Documents\\ProyectoSistemasDistribuidos\\HotelManagement\\hotelManagement.server\\HotelManagement.Server.csproj",
       "projectName": "HotelManagement.Server",
-      "projectPath": "C:\\Users\\diego\\Documents\\ProyectoSistemasDistribuidos\\ProyectoSistemasDistribuidos\\HotelManagement\\HotelManagement.Server\\HotelManagement.Server.csproj",
-      "packagesPath": "C:\\Users\\diego\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\diego\\Documents\\ProyectoSistemasDistribuidos\\ProyectoSistemasDistribuidos\\HotelManagement\\HotelManagement.Server\\obj\\",
+      "projectPath": "C:\\Users\\bryan\\Documents\\ProyectoSistemasDistribuidos\\HotelManagement\\hotelManagement.server\\HotelManagement.Server.csproj",
+      "packagesPath": "C:\\Users\\bryan\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\bryan\\Documents\\ProyectoSistemasDistribuidos\\HotelManagement\\hotelManagement.server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\diego\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\bryan\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4426,7 +4426,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
