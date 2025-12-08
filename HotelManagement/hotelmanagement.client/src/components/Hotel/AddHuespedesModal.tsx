@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { calcularEstadoHuesped, type EstadoHuesped } from "../../utils/huespedesUtils";
 import "../../styles/AddHuespedesModal.css";
 
 interface AddHuespedesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: HuespedesFormData) => void;
+  initialData?: HuespedesFormData & { id?: number };
 }
 
 export interface HuespedesFormData {
@@ -12,21 +14,67 @@ export interface HuespedesFormData {
   apellido: string;
   email: string;
   telefono: string;
-  pais: string;
-  estado: "VIP" | "Frecuente" | "Regular" | "Bloqueado";
+  documentoIdentidad: string;
+  direccion: string;
+  estado: EstadoHuesped;
 }
 
-export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesModalProps) => {
-  const [formData, setFormData] = useState<HuespedesFormData>({
-    nombre: "",
-    apellido: "",
-    email: "",
-    telefono: "",
-    pais: "",
-    estado: "Regular",
-  });
+export const AddHuespedesModal = ({ isOpen, onClose, onSubmit, initialData }: AddHuespedesModalProps) => {
+  const isEditMode = !!initialData?.id;
+
+  const [formData, setFormData] = useState<HuespedesFormData>(
+    initialData
+      ? {
+          nombre: initialData.nombre,
+          apellido: initialData.apellido,
+          email: initialData.email,
+          telefono: initialData.telefono,
+          documentoIdentidad: initialData.documentoIdentidad,
+          direccion: initialData.direccion,
+          estado: initialData.estado,
+        }
+      : {
+          nombre: "",
+          apellido: "",
+          email: "",
+          telefono: "",
+          documentoIdentidad: "",
+          direccion: "",
+          estado: "Regular",
+        }
+  );
 
   const [errors, setErrors] = useState<Partial<HuespedesFormData>>({});
+
+  // Resetear datos cuando se abre el modal o cambia initialData
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData?.id) {
+        // Modo edición
+        setFormData({
+          nombre: initialData.nombre,
+          apellido: initialData.apellido,
+          email: initialData.email,
+          telefono: initialData.telefono,
+          documentoIdentidad: initialData.documentoIdentidad,
+          direccion: initialData.direccion,
+          estado: initialData.estado,
+        });
+      } else {
+        // Modo creación
+        setFormData({
+          nombre: "",
+          apellido: "",
+          email: "",
+          telefono: "",
+          documentoIdentidad: "",
+          direccion: "",
+          estado: "Regular",
+        });
+      }
+      setErrors({});
+    }
+  }, [isOpen, initialData]);
 
   const validateForm = () => {
     const newErrors: Partial<HuespedesFormData> = {};
@@ -45,8 +93,11 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
     if (!formData.telefono.trim()) {
       newErrors.telefono = "El teléfono es requerido";
     }
-    if (!formData.pais.trim()) {
-      newErrors.pais = "El país es requerido";
+    if (!formData.documentoIdentidad.trim()) {
+      newErrors.documentoIdentidad = "El documento de identidad es requerido";
+    }
+    if (!formData.direccion.trim()) {
+      newErrors.direccion = "La dirección es requerida";
     }
 
     setErrors(newErrors);
@@ -56,13 +107,26 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      // Calcular el estado automáticamente (nuevo huésped siempre es Regular o basado en historial)
+      const estadoCalculado = calcularEstadoHuesped({
+        totalReservas: 0,
+        montoTotal: 0,
+        esBloqueado: false,
+      });
+
+      const dataWithEstado = {
+        ...formData,
+        estado: estadoCalculado,
+      };
+
+      onSubmit(dataWithEstado);
       setFormData({
         nombre: "",
         apellido: "",
         email: "",
         telefono: "",
-        pais: "",
+        documentoIdentidad: "",
+        direccion: "",
         estado: "Regular",
       });
       onClose();
@@ -90,9 +154,15 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="modal-title">Añadir Nuevo Huésped</h2>
+          <h2 className="modal-title">{isEditMode ? "Editar Huésped" : "Crear Huésped"}</h2>
           <button className="modal-close-btn" onClick={onClose}>✕</button>
         </div>
+
+        <p className="modal-subtitle">
+          {isEditMode
+            ? "Edite los campos necesarios para actualizar la información del huésped."
+            : "Rellene los siguientes campos para añadir un nuevo huésped."}
+        </p>
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-row">
@@ -111,14 +181,14 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
             </div>
 
             <div className="form-group">
-              <label htmlFor="apellido">Apellido *</label>
+              <label htmlFor="apellido">Apellidos *</label>
               <input
                 id="apellido"
                 type="text"
                 name="apellido"
                 value={formData.apellido}
                 onChange={handleChange}
-                placeholder="Ej: García"
+                placeholder="Ej: García López"
                 className={`form-input ${errors.apellido ? "error" : ""}`}
               />
               {errors.apellido && <span className="error-message">{errors.apellido}</span>}
@@ -134,12 +204,14 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Ej: juan@ejemplo.com"
+                placeholder="ejemplo@email.com"
                 className={`form-input ${errors.email ? "error" : ""}`}
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
+          </div>
 
+          <div className="form-row">
             <div className="form-group">
               <label htmlFor="telefono">Teléfono *</label>
               <input
@@ -148,42 +220,40 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
                 name="telefono"
                 value={formData.telefono}
                 onChange={handleChange}
-                placeholder="Ej: +34 600 123 456"
+                placeholder="+1-XXX-XXX-XXXX"
                 className={`form-input ${errors.telefono ? "error" : ""}`}
               />
               {errors.telefono && <span className="error-message">{errors.telefono}</span>}
             </div>
+
+            <div className="form-group">
+              <label htmlFor="documentoIdentidad">Documento de Identidad *</label>
+              <input
+                id="documentoIdentidad"
+                type="text"
+                name="documentoIdentidad"
+                value={formData.documentoIdentidad}
+                onChange={handleChange}
+                placeholder="DNI/Pasaporte"
+                className={`form-input ${errors.documentoIdentidad ? "error" : ""}`}
+              />
+              {errors.documentoIdentidad && <span className="error-message">{errors.documentoIdentidad}</span>}
+            </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="pais">País *</label>
+            <div className="form-group form-group-full">
+              <label htmlFor="direccion">Dirección *</label>
               <input
-                id="pais"
+                id="direccion"
                 type="text"
-                name="pais"
-                value={formData.pais}
+                name="direccion"
+                value={formData.direccion}
                 onChange={handleChange}
-                placeholder="Ej: España"
-                className={`form-input ${errors.pais ? "error" : ""}`}
+                placeholder="Calle, Número, Ciudad"
+                className={`form-input ${errors.direccion ? "error" : ""}`}
               />
-              {errors.pais && <span className="error-message">{errors.pais}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="estado">Estado</label>
-              <select
-                id="estado"
-                name="estado"
-                value={formData.estado}
-                onChange={handleChange}
-                className="form-input"
-              >
-                <option value="Regular">Regular</option>
-                <option value="Frecuente">Frecuente</option>
-                <option value="VIP">VIP</option>
-                <option value="Bloqueado">Bloqueado</option>
-              </select>
+              {errors.direccion && <span className="error-message">{errors.direccion}</span>}
             </div>
           </div>
 
@@ -192,7 +262,7 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit }: AddHuespedesMod
               Cancelar
             </button>
             <button type="submit" className="btn-submit">
-              Guardar Huésped
+              {isEditMode ? "Guardar Cambios" : "Crear Huésped"}
             </button>
           </div>
         </form>
