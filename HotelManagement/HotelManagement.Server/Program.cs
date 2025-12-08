@@ -13,16 +13,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Puertos comunes de React
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "https://localhost:5173", "https://localhost:33820")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
 });
 
-// Configurar DbContext con base de datos en memoria
+// Configurar DbContext con MySQL
+var connectionString = builder.Configuration.GetConnectionString("HotelDB");
 builder.Services.AddDbContext<HotelDbContext>(options =>
-    options.UseInMemoryDatabase("HotelDB"));
+    options.UseMySql(connectionString, 
+        ServerVersion.AutoDetect(connectionString)));
 
 // Configurar JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -107,11 +109,19 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Inicializar la base de datos con datos semilla
+// Aplicar migraciones automáticamente y seed data
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
-    context.Database.EnsureCreated();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Error al aplicar migraciones");
+    }
 }
 
 // Configurar el pipeline HTTP
@@ -121,16 +131,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Management API v1");
-        c.RoutePrefix = string.Empty; // Swagger en la raíz (http://localhost:5000)
+        c.RoutePrefix = string.Empty; 
     });
 }
 
 // Habilitar CORS
 app.UseCors("AllowReact");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Comentado para desarrollo
 
-app.UseAuthentication(); // IMPORTANTE: Antes de UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();

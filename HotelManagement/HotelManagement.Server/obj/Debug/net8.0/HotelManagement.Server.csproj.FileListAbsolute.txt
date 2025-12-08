@@ -22,7 +22,6 @@ C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuid
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
-C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
@@ -150,3 +149,5 @@ C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuid
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\obj\Debug\net8.0\HotelManagement.Server.pdb
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\obj\Debug\net8.0\HotelManagement.Server.genruntimeconfig.cache
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\obj\Debug\net8.0\ref\HotelManagement.Server.dll
+C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\MySqlConnector.dll
+C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\HotelManagement.Server\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
