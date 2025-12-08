@@ -1,18 +1,39 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logos/logoRemoveBG.png";
+import { authService } from "../services/authService";
 import "../styles/login.css";
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const [nombreUsuario, setNombreUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setIsLoading(true);
-    console.log({ email, password, rememberMe });
-    setTimeout(() => setIsLoading(false), 1000);
+
+    try {
+      const response = await authService.login({
+        nombreUsuario,
+        password,
+      });
+
+      // Guardar token en localStorage
+      authService.saveToken(response.token);
+
+      // Redirigir al dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Usuario o contraseña incorrectos");
+      console.error("Error al iniciar sesión:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -31,19 +52,20 @@ export const LoginPage = () => {
 
         {/* Form */}
         <div className="login-form-box">
+          {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit} className="login-form">
-            {/* Email Field */}
+            {/* Username Field */}
             <div className="form-control">
-              <label htmlFor="email" className="form-label">
-                Correo Electrónico
+              <label htmlFor="username" className="form-label">
+                Nombre de Usuario
               </label>
               <input
-                id="email"
-                type="email"
-                placeholder="correo@ejemplo.com"
+                id="username"
+                type="text"
+                placeholder="usuario@ejemplo.com"
                 className="form-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={nombreUsuario}
+                onChange={(e) => setNombreUsuario(e.target.value)}
                 required
               />
             </div>

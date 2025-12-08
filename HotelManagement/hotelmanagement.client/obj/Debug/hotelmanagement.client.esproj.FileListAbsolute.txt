@@ -1,1 +1,2 @@
 C:\Users\diego\Documents\ProyectoSistemasDistribuidos\ProyectoSistemasDistribuidos\HotelManagement\hotelmanagement.client\obj\Debug\hotelmanagement.client.esproj.CoreCompileInputs.cache
+C:\Users\bryan\Documents\ProyectoSistemasDistribuidos\HotelManagement\hotelmanagement.client\obj\Debug\hotelmanagement.client.esproj.CoreCompileInputs.cache
