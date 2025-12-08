@@ -16,7 +16,7 @@ export const Sidebar = () => {
   return (
     <aside className="sidebar-container">
       <div className="sidebar-header">
-        <h3 className="sidebar-title">Gestión Hotel</h3>
+        <h3 className="sidebar-title">Panel de Control</h3>
       </div>
 
       <nav className="sidebar-nav">
