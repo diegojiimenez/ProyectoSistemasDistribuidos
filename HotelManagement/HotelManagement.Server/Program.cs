@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Puertos comunes de React
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "https://localhost:5173", "https://localhost:33820")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -128,7 +128,7 @@ if (app.Environment.IsDevelopment())
 // Habilitar CORS
 app.UseCors("AllowReact");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Comentado para desarrollo
 
 app.UseAuthentication(); // IMPORTANTE: Antes de UseAuthorization
 app.UseAuthorization();
