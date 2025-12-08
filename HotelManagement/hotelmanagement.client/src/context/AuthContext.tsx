@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       nombreUsuario: response.nombreUsuario,
       rol: response.rol,
     });
+    setIsLoading(false);
   };
 
   const logout = () => {

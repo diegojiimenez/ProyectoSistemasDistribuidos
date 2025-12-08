@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import type { ReactNode } from "react";
 import { useAuth } from "../hooks/useAuth";
+import "./ProtectedRoute.css";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -10,7 +11,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <div className="loading-container">Cargando...</div>;
   }
 
   if (!isAuthenticated) {
