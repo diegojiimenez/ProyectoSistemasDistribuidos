@@ -1,59 +1,98 @@
 import { useAuth } from "../hooks/useAuth";
+import { Box, Flex, VStack, Heading, Text, SimpleGrid, Card, CardBody } from "@chakra-ui/react";
 import { Navbar } from "../components/Navbar";
-import "./DashboardPage.css";
+import { Sidebar } from "../components/Sidebar";
 
 export const DashboardPage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="dashboard-container">
+    <Flex direction="column" minH="100vh" bg="gray.50">
       {/* Navbar */}
       <Navbar />
 
-      {/* Main Content */}
-      <main className="dashboard-main">
+      {/* Main Layout */}
+      <Flex flex={1}>
         {/* Sidebar */}
-        <aside className="dashboard-sidebar">
-          <nav className="sidebar-nav">
-            <h2 className="sidebar-title">Menú</h2>
-            <ul className="nav-list">
-              <li><a href="#dashboard" className="nav-link active">Dashboard</a></li>
-              <li><a href="#clientes" className="nav-link">Clientes</a></li>
-              <li><a href="#cuartos" className="nav-link">Cuartos</a></li>
-              <li><a href="#reservas" className="nav-link">Reservas</a></li>
-            </ul>
-          </nav>
-        </aside>
+        <Sidebar />
 
-        {/* Content Area */}
-        <section className="dashboard-content">
-          <div className="welcome-card">
-            <h2>Bienvenido, {user?.nombreUsuario}!</h2>
-            <p>Este es tu panel de control. Aquí podrás gestionar:</p>
-            <ul className="features-list">
-              <li>👥 Clientes y huéspedes</li>
-              <li>🛏️ Cuartos del hotel</li>
-              <li>📅 Reservas y disponibilidad</li>
-            </ul>
-          </div>
+        {/* Main Content */}
+        <Box flex={1} p={8} overflowY="auto">
+          {/* Welcome Card */}
+          <Card mb={8} bg="white">
+            <CardBody>
+              <Heading as="h2" size="lg" mb={4}>
+                Bienvenido, {user?.nombreUsuario}!
+              </Heading>
+              <Text color="gray.600" mb={4}>
+                Este es tu panel de control. Aquí podrás gestionar:
+              </Text>
+              <VStack align="start" spacing={2} color="gray.600">
+                <Text>👥 Clientes y huéspedes</Text>
+                <Text>🛏️ Cuartos del hotel</Text>
+                <Text>📅 Reservas y disponibilidad</Text>
+              </VStack>
+            </CardBody>
+          </Card>
 
-          {/* Cards de estadísticas */}
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h3>Total Clientes</h3>
-              <p className="stat-number">--</p>
-            </div>
-            <div className="stat-card">
-              <h3>Cuartos Disponibles</h3>
-              <p className="stat-number">--</p>
-            </div>
-            <div className="stat-card">
-              <h3>Reservas Activas</h3>
-              <p className="stat-number">--</p>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          {/* Stats Grid */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            <Card bg="white">
+              <CardBody textAlign="center">
+                <Text
+                  fontSize="xs"
+                  fontWeight={600}
+                  color="gray.600"
+                  textTransform="uppercase"
+                  letterSpacing="wider"
+                  mb={2}
+                >
+                  Total Clientes
+                </Text>
+                <Text fontSize="2xl" fontWeight="bold" color="blue.600">
+                  --
+                </Text>
+              </CardBody>
+            </Card>
+
+            <Card bg="white">
+              <CardBody textAlign="center">
+                <Text
+                  fontSize="xs"
+                  fontWeight={600}
+                  color="gray.600"
+                  textTransform="uppercase"
+                  letterSpacing="wider"
+                  mb={2}
+                >
+                  Cuartos Disponibles
+                </Text>
+                <Text fontSize="2xl" fontWeight="bold" color="blue.600">
+                  --
+                </Text>
+              </CardBody>
+            </Card>
+
+            <Card bg="white">
+              <CardBody textAlign="center">
+                <Text
+                  fontSize="xs"
+                  fontWeight={600}
+                  color="gray.600"
+                  textTransform="uppercase"
+                  letterSpacing="wider"
+                  mb={2}
+                >
+                  Reservas Activas
+                </Text>
+                <Text fontSize="2xl" fontWeight="bold" color="blue.600">
+                  --
+                </Text>
+              </CardBody>
+            </Card>
+          </SimpleGrid>
+        </Box>
+      </Flex>
+    </Flex>
   );
 };
