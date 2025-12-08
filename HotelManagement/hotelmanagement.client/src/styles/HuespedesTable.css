@@ -1,0 +1,314 @@
+/* HuespedesTable Styles */
+
+/* Color Palette */
+:root {
+  --color-primary-dark: #000000;
+  --color-primary-light: #2F4F4F;
+  --color-border-warm: #D7CCC8;
+  --color-bg-light: #FAFAFA;
+  --color-bg-white: #ffffff;
+  --color-text-dark: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-disabled: #9E9E9E;
+  --color-text-bold: #424242;
+
+  /* Estado Colors */
+  --color-vip-bg: #E8F5E9;
+  --color-vip-text: #1B5E20;
+  
+  --color-frecuente-bg: #E3F2FD;
+  --color-frecuente-text: #0D47A1;
+  
+  --color-regular-bg: #F5F5F5;
+  --color-regular-text: #424242;
+  
+  --color-bloqueado-bg: #FFE0B2;
+  --color-bloqueado-text: #E65100;
+
+  /* Hover Colors */
+  --color-hover-light: #E8E8E8;
+  --color-shadow-inset: rgba(215, 204, 200, 0.3);
+}
+
+/* VStack wrapper styling */
+.huesped-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Input Search */
+.huesped-controls-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.huesped-search-wrapper {
+  position: relative;
+  flex: 0 0 60%;
+  min-width: 250px;
+}
+
+.huesped-search-icon-svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-disabled);
+  pointer-events: none;
+  z-index: 10;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.huesped-search-input {
+  background-color: var(--color-bg-white);
+  border: 2px solid var(--color-border-warm);
+  color: var(--color-text-dark);
+  font-size: 1rem;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+.huesped-search-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.huesped-search-input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+/* Filter Buttons - Segmented Control */
+.huesped-filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.huesped-filter-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border-warm);
+  background-color: var(--color-bg-white);
+  color: var(--color-primary-dark);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.huesped-filter-btn:hover {
+  background-color: var(--color-bg-light);
+  border-color: var(--color-primary-dark);
+}
+
+.huesped-filter-btn.active {
+  background-color: var(--color-primary-dark);
+  color: var(--color-bg-white);
+  border-color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.huesped-filter-btn.active:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Table Container */
+.huesped-table-container {
+  overflow-x: auto;
+  background-color: var(--color-bg-white);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-warm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+/* Table Head */
+.huesped-table-head {
+  background-color: var(--color-bg-light);
+}
+
+.huesped-table-header {
+  border-bottom: 2px solid var(--color-border-warm);
+}
+
+.huesped-table-header-cell {
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem 1.25rem;
+}
+
+/* Table Body */
+.huesped-table-row {
+  border-bottom: 1px solid #EEEEEE;
+  transition: all 0.2s ease;
+}
+
+.huesped-table-row:nth-child(odd) {
+  background-color: var(--color-bg-white);
+}
+
+.huesped-table-row:nth-child(even) {
+  background-color: var(--color-bg-light);
+}
+
+.huesped-table-row:hover {
+  background-color: #F5F5F5;
+  box-shadow: inset 0 0 0 1px var(--color-shadow-inset);
+}
+
+/* Table Cells */
+.huesped-table-cell {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  padding: 1.25rem 1.25rem;
+}
+
+.huesped-table-cell-name {
+  font-weight: 500;
+  color: var(--color-text-dark);
+  font-size: 0.95rem;
+}
+
+.huesped-table-cell-actions {
+  text-align: center;
+  padding: 1.25rem 0.75rem;
+}
+
+/* Badge Status - Now using Chakra UI directly */
+/* Removed CSS-based badges as they're now Chakra UI components */
+
+/* Badge Styles */
+.huesped-badge {
+  display: inline-block;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.huesped-badge-vip {
+  background-color: #2D5016;
+  color: #C8E6C9;
+}
+
+.huesped-badge-frecuente {
+  background-color: #1B3A5C;
+  color: #81D4FA;
+}
+
+.huesped-badge-regular {
+  background-color: #3E3E3E;
+  color: #BDBDBD;
+}
+
+.huesped-badge-bloqueado {
+  background-color: #5D3A1A;
+  color: #FFB74D;
+}
+
+/* Action Button */
+.huesped-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.huesped-action-btn:hover {
+  background-color: var(--color-hover-light);
+  color: var(--color-primary-dark);
+}
+
+/* Action Button Icon */
+.huesped-action-btn-icon {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pagination */
+.huesped-pagination {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.huesped-pagination-btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-border-warm);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-bold);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.huesped-pagination-btn:hover:not(:disabled) {
+  background-color: var(--color-bg-light);
+  border-color: var(--color-primary-dark);
+}
+
+.huesped-pagination-btn.active {
+  background-color: var(--color-primary-dark);
+  color: var(--color-bg-white);
+  border-color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.huesped-pagination-btn:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.huesped-pagination-ellipsis {
+  padding: 0.375rem 0.5rem;
+  color: var(--color-text-disabled);
+  font-size: 0.875rem;
+}
+
+/* Info Text */
+.huesped-info-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  flex: 0 1 auto;
+}
+
+/* Pagination Wrapper */
+.huesped-pagination-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 0 1 auto;
+}

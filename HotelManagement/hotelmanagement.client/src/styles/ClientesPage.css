@@ -1,0 +1,84 @@
+/* Clientes Page Container */
+.clientes-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* Clientes Layout */
+.clientes-layout {
+  display: flex;
+  flex: 1;
+  margin-left: 220px;
+}
+
+/* Main Content Area */
+.clientes-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Header con Título y Botones */
+.clientes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid black;
+}
+
+/* Clientes Title Section */
+.clientes-title-section {
+  flex: 1;
+}
+
+.clientes-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.clientes-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Action Buttons */
+.clientes-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Button Styles */
+.btn-export,
+.btn-add-huesped {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #000000;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-export:hover,
+.btn-add-huesped:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #000000;
+}
+
+.btn-export:active,
+.btn-add-huesped:active {
+  opacity: 0.9;
+}

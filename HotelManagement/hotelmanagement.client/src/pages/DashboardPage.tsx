@@ -37,7 +37,7 @@ export const DashboardPage = () => {
           {/* Mission & Vision Grid */}
           <div className="mission-vision-grid">
             <div className="mission-card">
-              <h3> MISIÓN – RÚSTICO</h3>
+              <h3> MISIÓN</h3>
               <p>
                 Brindar una experiencia de hospedaje cálida y auténtica en medio de la montaña,
                 combinando el confort moderno con la esencia rústica de la naturaleza.
@@ -49,7 +49,7 @@ export const DashboardPage = () => {
             </div>
 
             <div className="vision-card">
-              <h3> VISIÓN – RÚSTICO</h3>
+              <h3> VISIÓN</h3>
               <p>
                 Convertirnos en el refugio montañoso más reconocido por su armonía entre diseño,
                 naturaleza y bienestar, siendo un referente de hotelería sostenible y de alto estándar
