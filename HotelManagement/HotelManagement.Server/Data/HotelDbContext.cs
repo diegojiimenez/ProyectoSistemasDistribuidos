@@ -70,76 +70,70 @@ namespace HotelManagement.API.Data
                     Id = 1,
                     Numero = "101",
                     Tipo = TipoCuarto.Individual,
-                    CapacidadPersonas = 1,
+                    Descripcion = "Habitación individual con vista a la ciudad",
                     PrecioPorNoche = 50.00m,
-                    Estado = EstadoCuarto.Disponible,
-                    Descripcion = "Habitación individual con vista a la ciudad"
+                    CapacidadPersonas = 1, 
+                    Estado = EstadoCuarto.Disponible
                 },
                 new Cuarto
                 {
                     Id = 2,
                     Numero = "102",
                     Tipo = TipoCuarto.Doble,
-                    CapacidadPersonas = 2,
-                    PrecioPorNoche = 80.00m,
-                    Estado = EstadoCuarto.Disponible,
-                    Descripcion = "Habitación doble con cama queen size"
+                    Descripcion = "Habitación doble con balcón",
+                    PrecioPorNoche = 75.00m,
+                    CapacidadPersonas = 2, 
+                    Estado = EstadoCuarto.Disponible
                 },
                 new Cuarto
                 {
                     Id = 3,
                     Numero = "201",
                     Tipo = TipoCuarto.Suite,
-                    CapacidadPersonas = 3,
+                    Descripcion = "Suite de lujo con jacuzzi",
                     PrecioPorNoche = 150.00m,
-                    Estado = EstadoCuarto.Disponible,
-                    Descripcion = "Suite con sala de estar y jacuzzi"
+                    CapacidadPersonas = 4, 
+                    Estado = EstadoCuarto.Disponible
                 },
                 new Cuarto
                 {
                     Id = 4,
                     Numero = "202",
                     Tipo = TipoCuarto.Familiar,
-                    CapacidadPersonas = 4,
+                    Descripcion = "Habitación familiar amplia",
                     PrecioPorNoche = 120.00m,
-                    Estado = EstadoCuarto.Disponible,
-                    Descripcion = "Habitación familiar con dos camas dobles"
+                    CapacidadPersonas = 6, 
+                    Estado = EstadoCuarto.Disponible
                 },
                 new Cuarto
                 {
                     Id = 5,
                     Numero = "301",
-                    Tipo = TipoCuarto.Presidencial,
-                    CapacidadPersonas = 4,
-                    PrecioPorNoche = 300.00m,
-                    Estado = EstadoCuarto.Disponible,
-                    Descripcion = "Suite presidencial con todas las comodidades"
+                    Tipo = TipoCuarto.Doble,
+                    Descripcion = "Habitación doble estándar",
+                    PrecioPorNoche = 80.00m,
+                    CapacidadPersonas = 2, 
+                    Estado = EstadoCuarto.Disponible
                 }
             );
 
-            // Huéspedes de ejemplo
-            modelBuilder.Entity<Huesped>().HasData(
-                new Huesped
+            // Usuarios iniciales
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario
                 {
                     Id = 1,
-                    Nombre = "Juan",
-                    Apellido = "Pérez",
-                    Email = "juan.perez@email.com",
-                    Telefono = "+34-600-123-456",
-                    DocumentoIdentidad = "12345678A",
-                    Direccion = "Calle Mayor 1, Madrid",
-                    FechaRegistro = DateTime.Now.AddMonths(-3)
+                    NombreUsuario = "admin",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                    Rol = "Admin",
+                    FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
-                new Huesped
+                new Usuario
                 {
                     Id = 2,
-                    Nombre = "María",
-                    Apellido = "García",
-                    Email = "maria.garcia@email.com",
-                    Telefono = "+34-600-789-012",
-                    DocumentoIdentidad = "87654321B",
-                    Direccion = "Avenida Principal 45, Barcelona",
-                    FechaRegistro = DateTime.Now.AddMonths(-2)
+                    NombreUsuario = "usuario",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("User123!"),
+                    Rol = "Usuario",
+                    FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
         }

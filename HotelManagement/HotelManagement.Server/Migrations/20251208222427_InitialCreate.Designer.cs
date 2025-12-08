@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagement.Server.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20251208174138_InitialCreate")]
+    [Migration("20251208222427_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -63,50 +63,50 @@ namespace HotelManagement.Server.Migrations
                             Id = 1,
                             CapacidadPersonas = 1,
                             Descripcion = "Habitación individual con vista a la ciudad",
-                            Estado = 1,
+                            Estado = 0,
                             Numero = "101",
                             PrecioPorNoche = 50.00m,
-                            Tipo = 1
+                            Tipo = 0
                         },
                         new
                         {
                             Id = 2,
                             CapacidadPersonas = 2,
-                            Descripcion = "Habitación doble con cama queen size",
-                            Estado = 1,
+                            Descripcion = "Habitación doble con balcón",
+                            Estado = 0,
                             Numero = "102",
-                            PrecioPorNoche = 80.00m,
-                            Tipo = 2
+                            PrecioPorNoche = 75.00m,
+                            Tipo = 1
                         },
                         new
                         {
                             Id = 3,
-                            CapacidadPersonas = 3,
-                            Descripcion = "Suite con sala de estar y jacuzzi",
-                            Estado = 1,
+                            CapacidadPersonas = 4,
+                            Descripcion = "Suite de lujo con jacuzzi",
+                            Estado = 0,
                             Numero = "201",
                             PrecioPorNoche = 150.00m,
-                            Tipo = 3
+                            Tipo = 2
                         },
                         new
                         {
                             Id = 4,
-                            CapacidadPersonas = 4,
-                            Descripcion = "Habitación familiar con dos camas dobles",
-                            Estado = 1,
+                            CapacidadPersonas = 6,
+                            Descripcion = "Habitación familiar amplia",
+                            Estado = 0,
                             Numero = "202",
                             PrecioPorNoche = 120.00m,
-                            Tipo = 4
+                            Tipo = 3
                         },
                         new
                         {
                             Id = 5,
-                            CapacidadPersonas = 4,
-                            Descripcion = "Suite presidencial con todas las comodidades",
-                            Estado = 1,
+                            CapacidadPersonas = 2,
+                            Descripcion = "Habitación doble estándar",
+                            Estado = 0,
                             Numero = "301",
-                            PrecioPorNoche = 300.00m,
-                            Tipo = 5
+                            PrecioPorNoche = 80.00m,
+                            Tipo = 1
                         });
                 });
 
@@ -158,30 +158,6 @@ namespace HotelManagement.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Huespedes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Apellido = "Pérez",
-                            Direccion = "Calle Mayor 1, Madrid",
-                            DocumentoIdentidad = "12345678A",
-                            Email = "juan.perez@email.com",
-                            FechaRegistro = new DateTime(2025, 9, 8, 18, 41, 37, 543, DateTimeKind.Local).AddTicks(1118),
-                            Nombre = "Juan",
-                            Telefono = "+34-600-123-456"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Apellido = "García",
-                            Direccion = "Avenida Principal 45, Barcelona",
-                            DocumentoIdentidad = "87654321B",
-                            Email = "maria.garcia@email.com",
-                            FechaRegistro = new DateTime(2025, 10, 8, 18, 41, 37, 543, DateTimeKind.Local).AddTicks(1131),
-                            Nombre = "María",
-                            Telefono = "+34-600-789-012"
-                        });
                 });
 
             modelBuilder.Entity("HotelManagement.API.Models.Reserva", b =>
@@ -252,6 +228,24 @@ namespace HotelManagement.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            NombreUsuario = "admin",
+                            PasswordHash = "$2a$11$ZqBBKLPRkKWPKKb9VIjwuuQXw4QmuWEezea2ii17Dgd5xcum.YjGG",
+                            Rol = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            NombreUsuario = "usuario",
+                            PasswordHash = "$2a$11$UDvpK6D8kalEmHUVI1kxduAC9pXBvwk.J7g5k01MdIQEYh2z6/93G",
+                            Rol = "Usuario"
+                        });
                 });
 
             modelBuilder.Entity("HotelManagement.API.Models.Reserva", b =>

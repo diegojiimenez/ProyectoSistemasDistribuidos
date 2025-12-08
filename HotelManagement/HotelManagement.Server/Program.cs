@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using HotelManagement.API.Data;
 using HotelManagement.API.Repositories;
 using HotelManagement.API.Services;
+using HotelManagement.API.BackgroundServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -42,6 +43,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
+
+// Registrar el servicio de background
+builder.Services.AddHostedService<CuartoEstadoBackgroundService>();
 
 // Registrar Repositorios
 builder.Services.AddScoped<IHuespedRepository, HuespedRepository>();

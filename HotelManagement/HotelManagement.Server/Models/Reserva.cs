@@ -3,9 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelManagement.API.Models
 {
-    /// <summary>
-    /// Representa una reserva de hotel
-    /// </summary>
+    public enum EstadoReserva
+    {
+        Confirmada = 0,    
+        EnCurso = 1,       
+        Completada = 2,    
+        Cancelada = 3     
+    }
+
     public class Reserva
     {
         [Key]
@@ -14,8 +19,14 @@ namespace HotelManagement.API.Models
         [Required]
         public int HuespedId { get; set; }
 
+        [ForeignKey("HuespedId")]
+        public virtual Huesped Huesped { get; set; }
+
         [Required]
         public int CuartoId { get; set; }
+
+        [ForeignKey("CuartoId")]
+        public virtual Cuarto Cuarto { get; set; }
 
         [Required]
         public DateTime FechaEntrada { get; set; }
@@ -24,60 +35,25 @@ namespace HotelManagement.API.Models
         public DateTime FechaSalida { get; set; }
 
         [Required]
-        [Range(1, 20)]
+        [Range(1, 10)]
         public int NumeroPersonas { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal MontoTotal { get; set; }
 
         [Required]
         public EstadoReserva Estado { get; set; }
 
-        [Required]
-        [Range(0, 1000000)]
-        public decimal MontoTotal { get; set; }
-
-        public DateTime FechaCreacion { get; set; }
-
         [StringLength(500)]
         public string Observaciones { get; set; }
 
-        // Relaciones
-        [ForeignKey("HuespedId")]
-        public virtual Huesped Huesped { get; set; }
-
-        [ForeignKey("CuartoId")]
-        public virtual Cuarto Cuarto { get; set; }
+        public DateTime FechaCreacion { get; set; }
 
         public Reserva()
         {
             FechaCreacion = DateTime.Now;
-            Estado = EstadoReserva.Pendiente;
+            Estado = EstadoReserva.Confirmada; 
         }
-
-        /// <summary>
-        /// Calcula el número de noches de la reserva
-        /// </summary>
-        public int ObtenerNumeroNoches()
-        {
-            return (FechaSalida - FechaEntrada).Days;
-        }
-
-        /// <summary>
-        /// Calcula el monto total basado en el precio del cuarto
-        /// </summary>
-        public void CalcularMontoTotal(decimal precioPorNoche)
-        {
-            MontoTotal = ObtenerNumeroNoches() * precioPorNoche;
-        }
-    }
-
-    /// <summary>
-    /// Estados posibles de una reserva
-    /// </summary>
-    public enum EstadoReserva
-    {
-        Pendiente = 1,
-        Confirmada = 2,
-        EnCurso = 3,
-        Completada = 4,
-        Cancelada = 5
     }
 }
