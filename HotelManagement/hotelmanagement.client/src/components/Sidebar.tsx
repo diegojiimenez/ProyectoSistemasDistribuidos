@@ -1,13 +1,13 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "../styles/Sidebar.css";
 import DashboardIcon from "../assets/icons/dashboard-2-svgrepo-com.svg";
 import ReservasIcon from "../assets/icons/calendar-days-svgrepo-com.svg";
 import ClientesIcon from "../assets/icons/user-svgrepo-com.svg";
 
 const sidebarItems = [
-  { label: "Dashboard", href: "#dashboard", icon: DashboardIcon },
-  { label: "Reservas", href: "#reservas", icon: ReservasIcon },
-  { label: "Clientes", href: "#clientes", icon: ClientesIcon },
+  { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
+  { label: "Reservas", href: "/reservas", icon: ReservasIcon },
+  { label: "Clientes", href: "/clientes", icon: ClientesIcon },
 ];
 
 export const Sidebar = () => {
@@ -21,16 +21,16 @@ export const Sidebar = () => {
 
       <nav className="sidebar-nav">
         {sidebarItems.map((item) => (
-          <a
+          <Link
             key={item.href}
-            href={item.href}
-            className="nav-link"
+            to={item.href}
+            className={`nav-link ${location.pathname === item.href ? 'active' : ''}`}
           >
             <div className="nav-icon">
               <img src={item.icon} alt={item.label} />
             </div>
             {item.label}
-          </a>
+          </Link>
         ))}
       </nav>
     </aside>

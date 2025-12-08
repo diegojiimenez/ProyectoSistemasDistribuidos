@@ -10,6 +10,9 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // 🚀 MODO DESARROLLO: Comentar esta sección para acceso directo a rutas
+  // Descomenta este bloque cuando necesites autenticación real
+  /*
   if (isLoading) {
     return <div className="loading-container">Cargando...</div>;
   }
@@ -17,6 +20,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
+  */
 
+  // En desarrollo, permitir acceso directo a todas las rutas
   return <>{children}</>;
 };
