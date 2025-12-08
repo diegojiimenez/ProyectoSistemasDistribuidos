@@ -39,6 +39,13 @@
   color: #000000;
 }
 
+.modal-subtitle {
+  color: #6B7280;
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 0 1.5rem;
+}
+
 .modal-close-btn {
   background: none;
   border: none;
@@ -79,6 +86,10 @@
 .form-group {
   display: flex;
   flex-direction: column;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
 }
 
 .form-group label {

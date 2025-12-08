@@ -10,6 +10,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { HuespedesActionMenu } from "./HuespedesActionMenu";
 import "../../styles/HuespedesTable.css";
 
 // Search Icon Component
@@ -32,17 +33,15 @@ const SearchIcon = () => (
   </svg>
 );
 
-// Icon simple usando caracteres Unicode
-const MoreVerticalIcon = () => <span className="huesped-action-btn-icon">⋯</span>;
-
+// Paleta de colores con personalidad rústica
 interface Huesped {
   id: number;
   nombre: string;
   apellido: string;
   email: string;
   telefono: string;
-  pais: string;
-  ultimaEstancia: string;
+  documentoIdentidad: string;
+  fechaRegistro: string;
   estado: "VIP" | "Frecuente" | "Regular" | "Bloqueado";
 }
 
@@ -53,8 +52,8 @@ const mockHuespedes: Huesped[] = [
     apellido: "García",
     email: "ana.garcia@email.com",
     telefono: "+34 600 123 456",
-    pais: "España",
-    ultimaEstancia: "15/06/2024",
+    documentoIdentidad: "12345678A",
+    fechaRegistro: "2024-06-15",
     estado: "VIP",
   },
   {
@@ -63,8 +62,8 @@ const mockHuespedes: Huesped[] = [
     apellido: "Smith",
     email: "j.smith@email.com",
     telefono: "+44 20 7946 0958",
-    pais: "Reino Unido",
-    ultimaEstancia: "12/06/2024",
+    documentoIdentidad: "87654321B",
+    fechaRegistro: "2024-06-12",
     estado: "Frecuente",
   },
   {
@@ -73,8 +72,8 @@ const mockHuespedes: Huesped[] = [
     apellido: "Rossi",
     email: "maria.ross@email.com",
     telefono: "+39 06 6982",
-    pais: "Italia",
-    ultimaEstancia: "10/08/2024",
+    documentoIdentidad: "11111111C",
+    fechaRegistro: "2024-08-10",
     estado: "Regular",
   },
   {
@@ -83,8 +82,8 @@ const mockHuespedes: Huesped[] = [
     apellido: "Müller",
     email: "hans.muller@email.com",
     telefono: "+49 30 206580",
-    pais: "Alemania",
-    ultimaEstancia: "28/05/2024",
+    documentoIdentidad: "22222222D",
+    fechaRegistro: "2024-05-28",
     estado: "Frecuente",
   },
   {
@@ -93,8 +92,8 @@ const mockHuespedes: Huesped[] = [
     apellido: "Rodríguez",
     email: "c.rodriguez@email.com",
     telefono: "+52 55 5093 3000",
-    pais: "México",
-    ultimaEstancia: "10/05/2024",
+    documentoIdentidad: "33333333E",
+    fechaRegistro: "2024-05-10",
     estado: "Bloqueado",
   },
 ];
@@ -127,7 +126,12 @@ const filterOptions: FilterButton[] = [
   { label: "Bloqueado", key: "bloqueado" },
 ];
 
-export const HuespedesTable = () => {
+interface HuespedesTableProps {
+  onEdit: (huespedId: number) => void;
+  onDelete: (huespedId: number) => void;
+}
+
+export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
   const [huespedes] = useState<Huesped[]>(mockHuespedes);
@@ -156,7 +160,7 @@ export const HuespedesTable = () => {
           <input
             type="text"
             className="huesped-search-input"
-            placeholder="Buscar por nombre, email o DNI..."
+            placeholder="Buscar"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -184,8 +188,8 @@ export const HuespedesTable = () => {
               <Th className="huesped-table-header-cell">Nombre Completo</Th>
               <Th className="huesped-table-header-cell">Email</Th>
               <Th className="huesped-table-header-cell">Teléfono</Th>
-              <Th className="huesped-table-header-cell">País</Th>
-              <Th className="huesped-table-header-cell">Última Estancia</Th>
+              <Th className="huesped-table-header-cell">DNI</Th>
+              <Th className="huesped-table-header-cell">Fecha Registro</Th>
               <Th className="huesped-table-header-cell">Estado</Th>
               <Th></Th>
             </Tr>
@@ -200,17 +204,20 @@ export const HuespedesTable = () => {
                   </Td>
                   <Td className="huesped-table-cell">{huesped.email}</Td>
                   <Td className="huesped-table-cell">{huesped.telefono}</Td>
-                  <Td className="huesped-table-cell">{huesped.pais}</Td>
-                  <Td className="huesped-table-cell">{huesped.ultimaEstancia}</Td>
+                  <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
+                  <Td className="huesped-table-cell">{huesped.fechaRegistro}</Td>
                   <Td>
                     <span className={`huesped-badge ${config.className}`}>
                       {config.label}
                     </span>
                   </Td>
                   <Td className="huesped-table-cell-actions">
-                    <button className="huesped-action-btn">
-                      <MoreVerticalIcon />
-                    </button>
+                    <HuespedesActionMenu
+                      huespedId={huesped.id}
+                      huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
                   </Td>
                 </Tr>
               );
