@@ -13,6 +13,6 @@ namespace HotelManagement.API.Repositories
         Task<bool> DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> ExistsNumeroAsync(string numero);
-        Task<bool> EstaDisponibleAsync(int cuartoId, DateTime fechaEntrada, DateTime fechaSalida, int? reservaIdExcluir = null); // ✅ NUEVO parámetro
+        Task<bool> EstaDisponibleAsync(int cuartoId, DateTime fechaEntrada, DateTime fechaSalida, int? reservaIdExcluir = null); 
     }
 }

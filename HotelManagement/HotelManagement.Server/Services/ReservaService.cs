@@ -131,7 +131,7 @@ namespace HotelManagement.API.Services
 
                 var created = await _reservaRepository.CreateAsync(reserva);
 
-                // ✅ Cambiar estado del cuarto a Ocupado SOLO si la reserva empieza hoy o antes
+                // Cambiar estado del cuarto a Ocupado SOLO si la reserva empieza hoy o antes
                 if (dto.FechaEntrada <= DateTime.Today)
                 {
                     cuarto.Estado = EstadoCuarto.Ocupado;
