@@ -10,6 +10,7 @@
 .dashboard-layout {
   display: flex;
   flex: 1;
+  margin-left: 220px;
 }
 
 /* Main Content Area */
