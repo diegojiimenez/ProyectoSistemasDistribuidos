@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import "./Sidebar.css";
+import "../styles/Sidebar.css";
 import DashboardIcon from "../assets/icons/dashboard-2-svgrepo-com.svg";
 import ReservasIcon from "../assets/icons/calendar-days-svgrepo-com.svg";
 import ClientesIcon from "../assets/icons/user-svgrepo-com.svg";

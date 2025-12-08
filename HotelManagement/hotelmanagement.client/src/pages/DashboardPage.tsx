@@ -2,7 +2,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import "./DashboardPage.css";
+import "../styles/DashboardPage.css";
 
 // Datos inventados de clientes por mes
 const clientesData = [

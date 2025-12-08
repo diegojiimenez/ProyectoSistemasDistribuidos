@@ -1,9 +1,9 @@
+/* Protected Route Loading State */
 .loading-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100vh;
+  color: #9ca3af;
   font-size: 1.2rem;
-  color: #666666;
-  width: 100%;
 }
