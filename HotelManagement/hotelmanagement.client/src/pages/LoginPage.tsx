@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logos/logoRemoveBG.png";
-import { authService } from "../services/authService";
+import { useAuth } from "../hooks/useAuth";
 import "../styles/login.css";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Redirigir cuando se autentica
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,20 +26,11 @@ export const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await authService.login({
-        nombreUsuario,
-        password,
-      });
-
-      // Guardar token en localStorage
-      authService.saveToken(response.token);
-
-      // Redirigir al dashboard
-      navigate("/dashboard");
+      // Usar el método login del AuthContext
+      await login(nombreUsuario, password);
     } catch (err) {
       setError("Usuario o contraseña incorrectos");
       console.error("Error al iniciar sesión:", err);
-    } finally {
       setIsLoading(false);
     }
   };
