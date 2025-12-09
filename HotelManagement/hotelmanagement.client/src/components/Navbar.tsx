@@ -54,6 +54,16 @@ export const Navbar = () => {
           ))}
         </nav>
         <div className="navbar-actions">
+          {location.pathname === "/clientes" && (
+            <button className="btn-add-cliente" onClick={handleAddCliente}>
+              + Añadir Nuevo Huésped
+            </button>
+          )}
+          {location.pathname === "/reservas" && (
+            <button className="btn-add-cliente" onClick={handleAddReserva}>
+              + Añadir Nueva Reserva
+            </button>
+          )}
           <button className="action-btn" title="Notificaciones">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -68,16 +78,6 @@ export const Navbar = () => {
             </svg>
           </button>
         </div>
-        {location.pathname === "/clientes" && (
-          <button className="btn-add-cliente" onClick={handleAddCliente}>
-            + Añadir Nuevo Huésped
-          </button>
-        )}
-        {location.pathname === "/reservas" && (
-          <button className="btn-add-cliente" onClick={handleAddReserva}>
-            + Añadir Nueva Reserva
-          </button>
-        )}
       </div>
     </nav>
   );
