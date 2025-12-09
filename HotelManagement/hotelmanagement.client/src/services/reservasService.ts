@@ -18,6 +18,7 @@ export interface ReservaResponse {
   cuartoNumero: string;
   fechaEntrada: string;
   fechaSalida: string;
+  numeroPersonas: number;
   estado: string;
   precioTotal: number;
   observaciones?: string;

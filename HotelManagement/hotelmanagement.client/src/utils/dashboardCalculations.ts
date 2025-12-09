@@ -26,27 +26,39 @@ export const calculateDashboardStats = (
   reservas: ReservaResponse[],
   cuartos: CuartoResponse[]
 ): DashboardStats => {
-  // Contar todas las reservas no canceladas
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Establecer a medianoche
+
+  // Contar todas las reservas no canceladas (activas/futuras)
   const activeReservations = reservas.filter(
     (r) => r.estado !== "Cancelada"
   ).length;
 
-  // Contar todos los huéspedes en reservas no canceladas
-  const guestsCheckedIn = reservas.filter(
-    (r) => r.estado !== "Cancelada"
-  ).length;
+  // Contar cuartos OCUPADOS ACTUALMENTE (reservas en curso ahora)
+  const occupiedRoomsNow = reservas.filter((r) => {
+    if (r.estado === "Cancelada") return false;
+    
+    const fechaEntrada = new Date(r.fechaEntrada);
+    const fechaSalida = new Date(r.fechaSalida);
+    
+    // Normalizar fechas a medianoche
+    fechaEntrada.setHours(0, 0, 0, 0);
+    fechaSalida.setHours(0, 0, 0, 0);
+    
+    // Contar como ocupado si today está entre entrada y salida (exclusive en salida)
+    return today >= fechaEntrada && today < fechaSalida;
+  }).length;
 
-  // Ocupación basada en todas las reservas activas (no canceladas)
+  // Todos los huéspedes con reservas activas
+  const guestsCheckedIn = activeReservations;
+
+  // Cálculos basados en ocupación actual
   const totalRooms = cuartos.length;
-  const occupiedRooms = reservas.filter(
-    (r) => r.estado !== "Cancelada"
-  ).length;
-
   const currentOccupancy =
-    totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
+    totalRooms > 0 ? Math.round((occupiedRoomsNow / totalRooms) * 100) : 0;
 
-  // Cuartos disponibles
-  const availableRooms = totalRooms - occupiedRooms;
+  // Cuartos disponibles = total - ocupados ahora
+  const availableRooms = totalRooms - occupiedRoomsNow;
 
   return {
     activeReservations,
@@ -102,6 +114,9 @@ export const calculateRoomsByType = (
   reservas: ReservaResponse[],
   cuartos: CuartoResponse[]
 ): RoomTypeData[] => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Establecer a medianoche
+
   // Mapeo de tipos de cuartos
   const tipoMap: { [key: number]: string } = {
     [TipoCuarto.Individual]: "Individual",
@@ -117,10 +132,20 @@ export const calculateRoomsByType = (
     cuartosPorTipo[tipo] = (cuartosPorTipo[tipo] || 0) + 1;
   });
 
-  // Contar cuartos ocupados por tipo (todas las reservas no canceladas)
+  // Contar cuartos OCUPADOS AHORA por tipo (solo reservas en curso)
   const ocupadosPorTipo: { [key: string]: number } = {};
   reservas.forEach((reserva) => {
     if (reserva.estado === "Cancelada") return;
+
+    const fechaEntrada = new Date(reserva.fechaEntrada);
+    const fechaSalida = new Date(reserva.fechaSalida);
+    
+    // Normalizar fechas a medianoche
+    fechaEntrada.setHours(0, 0, 0, 0);
+    fechaSalida.setHours(0, 0, 0, 0);
+    
+    // Solo contar si la reserva está en curso ahora
+    if (today < fechaEntrada || today >= fechaSalida) return;
 
     const cuarto = cuartos.find((c) => c.id === reserva.cuartoId);
     if (!cuarto) return;
