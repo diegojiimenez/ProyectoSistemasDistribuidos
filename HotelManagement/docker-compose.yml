@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Base de datos MySQL
   mysql:
@@ -56,6 +58,20 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./hotelmanagement.client
+      dockerfile: Dockerfile
+    container_name: hotel-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
     networks:
       - hotel-network
     restart: unless-stopped

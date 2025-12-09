@@ -19,10 +19,21 @@ export interface RegistroRequest {
 
 export const authService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    return apiClient.post<LoginResponse>("/auth/login", data);
+    console.log("🔵 authService.login called with:", data);
+    const url = "/auth/login";
+    console.log("🔵 Fetching from:", url);
+    try {
+      const response = await apiClient.post<LoginResponse>(url, data);
+      console.log("🟢 Login response:", response);
+      return response;
+    } catch (error) {
+      console.error("🔴 Login error in authService:", error);
+      throw error;
+    }
   },
 
   async registro(data: RegistroRequest): Promise<{ message: string }> {
+    console.log("🔵 authService.registro called with:", data);
     return apiClient.post<{ message: string }>("/auth/registro", data);
   },
 

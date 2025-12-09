@@ -1,0 +1,85 @@
+/* Action Menu Container */
+.action-menu-container {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+/* Action Menu Button */
+.action-menu-btn {
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-menu-btn:hover {
+  background-color: #F3F4F6;
+  color: #000000;
+}
+
+/* Action Menu Dropdown */
+.action-menu-dropdown {
+  position: fixed;
+  bottom: auto;
+  right: auto;
+  background-color: #ffffff;
+  border: 1px solid #D7CCC8;
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  min-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Action Menu Item */
+.action-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  color: #1F2937;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.action-menu-item:hover {
+  background-color: #F9FAFB;
+}
+
+.action-menu-item:not(:last-child) {
+  border-bottom: 1px solid #EEEEEE;
+}
+
+/* Edit Option */
+.action-menu-edit {
+  color: #000000;
+}
+
+.action-menu-edit:hover {
+  background-color: #F0F0F0;
+  color: #000000;
+}
+
+/* Delete Option */
+.action-menu-delete {
+  color: #EF4444;
+}
+
+.action-menu-delete:hover {
+  background-color: #FEE2E2;
+  color: #EF4444;
+}

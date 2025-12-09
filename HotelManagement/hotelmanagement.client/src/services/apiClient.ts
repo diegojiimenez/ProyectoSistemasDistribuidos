@@ -1,8 +1,10 @@
-const API_BASE_URL = "http://localhost:5069/api";
+// Detectar si estamos en Docker o desarrollo local
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5069/api";
 
 interface RequestOptions {
-  headers?: Record<string, string>;
-  body?: unknown;
+  method: string;
+  headers: Record<string, string>;
+  body?: string;
 }
 
 export const apiClient = {
@@ -10,14 +12,20 @@ export const apiClient = {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "GET",
       headers,
     });
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     return response.json();
   },
 
@@ -25,7 +33,10 @@ export const apiClient = {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "POST",
@@ -33,7 +44,10 @@ export const apiClient = {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     return response.json();
   },
 
@@ -41,7 +55,10 @@ export const apiClient = {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "PUT",
@@ -49,7 +66,10 @@ export const apiClient = {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     return response.json();
   },
 
@@ -57,14 +77,20 @@ export const apiClient = {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "DELETE",
       headers,
     });
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     return response.json();
   },
 };

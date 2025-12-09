@@ -14,10 +14,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "https://localhost:5173", "https://localhost:33820")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.SetIsOriginAllowed(origin => 
+                origin.StartsWith("http://localhost:") || 
+                origin.StartsWith("http://127.0.0.1:") ||
+                origin.StartsWith("http://frontend"))
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -132,14 +135,10 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Management API v1");
-        c.RoutePrefix = string.Empty; 
-    });
+    app.UseSwaggerUI();
 }
 
-// Habilitar CORS
+// ⚠️ IMPORTANTE: CORS debe ir ANTES de Authentication y Authorization
 app.UseCors("AllowReact");
 
 // app.UseHttpsRedirection(); // Comentado para desarrollo
