@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { HuespedesActionMenu } from "./HuespedesActionMenu";
 import { huespedesService, type HuespedResponse } from "../../services/huespedesService";
 import { useAuth } from "../../hooks/useAuth";
+import { formatearFecha } from "../../utils/dateUtils";
 import "../../styles/HuespedesTable.css";
 
 // Search Icon Component
@@ -199,7 +200,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.correoElectronico}</Td>
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.telefono}</Td>
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.documentoIdentidad}</Td>
-                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.fechaRegistro}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{formatearFecha(huesped.fechaRegistro)}</Td>
                     <Td py={4} px={5}>
                       <span className={`huesped-badge ${config.className}`}>
                         {config.label}
