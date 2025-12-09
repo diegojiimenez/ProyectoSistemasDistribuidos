@@ -5,12 +5,13 @@ import {
   Tr,
   Th,
   Td,
-  Button,
   VStack,
   Box,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HuespedesActionMenu } from "./HuespedesActionMenu";
+import { huespedesService, type HuespedResponse } from "../../services/huespedesService";
+import { useAuth } from "../../hooks/useAuth";
 import "../../styles/HuespedesTable.css";
 
 // Search Icon Component
@@ -33,87 +34,6 @@ const SearchIcon = () => (
   </svg>
 );
 
-// Paleta de colores con personalidad rústica
-interface Huesped {
-  id: number;
-  nombre: string;
-  apellido: string;
-  email: string;
-  telefono: string;
-  documentoIdentidad: string;
-  fechaRegistro: string;
-  estado: "VIP" | "Frecuente" | "Regular" | "Bloqueado";
-}
-
-const mockHuespedes: Huesped[] = [
-  {
-    id: 1,
-    nombre: "Ana",
-    apellido: "García",
-    email: "ana.garcia@email.com",
-    telefono: "+34 600 123 456",
-    documentoIdentidad: "12345678A",
-    fechaRegistro: "2024-06-15",
-    estado: "VIP",
-  },
-  {
-    id: 2,
-    nombre: "John",
-    apellido: "Smith",
-    email: "j.smith@email.com",
-    telefono: "+44 20 7946 0958",
-    documentoIdentidad: "87654321B",
-    fechaRegistro: "2024-06-12",
-    estado: "Frecuente",
-  },
-  {
-    id: 3,
-    nombre: "Maria",
-    apellido: "Rossi",
-    email: "maria.ross@email.com",
-    telefono: "+39 06 6982",
-    documentoIdentidad: "11111111C",
-    fechaRegistro: "2024-08-10",
-    estado: "Regular",
-  },
-  {
-    id: 4,
-    nombre: "Hans",
-    apellido: "Müller",
-    email: "hans.muller@email.com",
-    telefono: "+49 30 206580",
-    documentoIdentidad: "22222222D",
-    fechaRegistro: "2024-05-28",
-    estado: "Frecuente",
-  },
-  {
-    id: 5,
-    nombre: "Carlos",
-    apellido: "Rodríguez",
-    email: "c.rodriguez@email.com",
-    telefono: "+52 55 5093 3000",
-    documentoIdentidad: "33333333E",
-    fechaRegistro: "2024-05-10",
-    estado: "Bloqueado",
-  },
-];
-
-// Paleta de colores con personalidad rústica
-const getEstadoConfig = (estado: string) => {
-  switch (estado) {
-    case "VIP":
-      return { className: "huesped-badge-vip", label: "VIP" };
-    case "Frecuente":
-      return { className: "huesped-badge-frecuente", label: "FRECUENTE" };
-    case "Regular":
-      return { className: "huesped-badge-regular", label: "REGULAR" };
-    case "Bloqueado":
-      return { className: "huesped-badge-bloqueado", label: "BLOQUEADO" };
-    default:
-      return { className: "huesped-badge-regular", label: "REGULAR" };
-  }
-};
-
 interface FilterButton {
   label: string;
   key: string;
@@ -129,27 +49,70 @@ const filterOptions: FilterButton[] = [
 interface HuespedesTableProps {
   onEdit: (huespedId: number) => void;
   onDelete: (huespedId: number) => void;
+  refreshTrigger?: number;
 }
 
-export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
+export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
-  const [huespedes] = useState<Huesped[]>(mockHuespedes);
+  const [huespedes, setHuespedes] = useState<HuespedResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
+
+  // Cargar huéspedes del backend
+  useEffect(() => {
+    const loadHuespedes = async () => {
+      if (!token) return;
+      
+      try {
+        setLoading(true);
+        const response = await huespedesService.getAllHuespedes(token);
+        if (response.exito && response.datos) {
+          setHuespedes(response.datos);
+        }
+      } catch (error) {
+        console.error("Error loading huéspedes:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadHuespedes();
+  }, [token, refreshTrigger]);
 
   const filteredHuespedes = huespedes.filter((huesped) => {
     const matchesSearch =
       huesped.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       huesped.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      huesped.email.toLowerCase().includes(searchTerm.toLowerCase());
+      huesped.correoElectronico.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (activeFilter === "todos") return matchesSearch;
-    if (activeFilter === "frecuente" && huesped.estado === "Frecuente") return matchesSearch;
-    if (activeFilter === "vip" && huesped.estado === "VIP") return matchesSearch;
-    if (activeFilter === "bloqueado" && huesped.estado === "Bloqueado") return matchesSearch;
+    if (activeFilter === "frecuente" && huesped.numeroReservas >= 3) return matchesSearch;
+    if (activeFilter === "vip" && huesped.numeroReservas >= 5) return matchesSearch;
+    if (activeFilter === "bloqueado") return matchesSearch; // Sin estado bloqueado en los datos reales
 
     return false;
   });
+
+  const getEstadoFromHuesped = (huesped: HuespedResponse) => {
+    if (huesped.numeroReservas >= 5) return "VIP";
+    if (huesped.numeroReservas >= 3) return "Frecuente";
+    return "Regular";
+  };
+
+  const getEstadoConfig = (estado: string) => {
+    switch (estado) {
+      case "VIP":
+        return { label: "VIP", className: "huesped-badge-vip" };
+      case "Frecuente":
+        return { label: "Huésped Frecuente", className: "huesped-badge-frecuente" };
+      case "Bloqueado":
+        return { label: "Bloqueado", className: "huesped-badge-bloqueado" };
+      default:
+        return { label: "Regular", className: "huesped-badge-regular" };
+    }
+  };
 
   return (
     <VStack>
@@ -205,13 +168,14 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
               </Tr>
             ) : (
               filteredHuespedes.map((huesped) => {
-                const config = getEstadoConfig(huesped.estado);
+                const estado = getEstadoFromHuesped(huesped);
+                const config = getEstadoConfig(estado);
                 return (
                   <Tr key={huesped.id} bg="#FAFAFA" borderBottom="1px solid #D7CCC8" _hover={{ bg: "#F5F5F5" }}>
                     <Td color="#6F4E37" fontSize="0.95rem" fontWeight="500" py={4} px={5}>
                       {huesped.nombre} {huesped.apellido}
                     </Td>
-                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.email}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.correoElectronico}</Td>
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.telefono}</Td>
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.documentoIdentidad}</Td>
                     <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.fechaRegistro}</Td>
@@ -239,7 +203,7 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
       {/* Pagination and Info Footer */}
       <div className="huesped-pagination">
         <p className="huesped-info-text">
-          Mostrando 1 a {filteredHuespedes.length} de 123 huéspedes
+          Mostrando 1 a {filteredHuespedes.length} de {huespedes.length} huéspedes
         </p>
         <div className="huesped-pagination-buttons">
           <button

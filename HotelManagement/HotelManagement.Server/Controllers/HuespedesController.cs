@@ -58,7 +58,7 @@ namespace HotelManagement.API.Controllers
         /// <param name="dto">Datos del huésped a crear</param>
         /// <returns>Huésped creado</returns>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Administrador")]
         [ProducesResponseType(typeof(ApiResponse<HuespedResponseDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -83,7 +83,7 @@ namespace HotelManagement.API.Controllers
         /// <param name="dto">Datos a actualizar</param>
         /// <returns>Huésped actualizado</returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Administrador")]
         [ProducesResponseType(typeof(ApiResponse<HuespedResponseDTO>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
@@ -108,7 +108,7 @@ namespace HotelManagement.API.Controllers
         /// <param name="id">ID del huésped</param>
         /// <returns>Resultado de la operación</returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Administrador")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]

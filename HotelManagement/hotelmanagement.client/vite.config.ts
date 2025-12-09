@@ -16,22 +16,36 @@ const certificateName = "hotelmanagement.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
+let https = false;
+
 if (!fs.existsSync(baseFolder)) {
     fs.mkdirSync(baseFolder, { recursive: true });
 }
 
 if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
-    if (0 !== child_process.spawnSync('dotnet', [
-        'dev-certs',
-        'https',
-        '--export-path',
-        certFilePath,
-        '--format',
-        'Pem',
-        '--no-password',
-    ], { stdio: 'inherit', }).status) {
-        throw new Error("Could not create certificate.");
+    try {
+        if (0 === child_process.spawnSync('dotnet', [
+            'dev-certs',
+            'https',
+            '--export-path',
+            certFilePath,
+            '--format',
+            'Pem',
+            '--no-password',
+        ], { stdio: 'pipe', }).status) {
+            https = {
+                cert: fs.readFileSync(certFilePath, 'utf8'),
+                key: fs.readFileSync(keyFilePath, 'utf8')
+            };
+        }
+    } catch (e) {
+        console.log('Could not create HTTPS certificate. Using HTTP for development.');
     }
+} else {
+    https = {
+        cert: fs.readFileSync(certFilePath, 'utf8'),
+        key: fs.readFileSync(keyFilePath, 'utf8')
+    };
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
@@ -53,9 +67,6 @@ export default defineConfig({
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '33820'),
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+        https: https || false
     }
 })

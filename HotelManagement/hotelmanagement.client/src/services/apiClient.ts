@@ -15,6 +15,7 @@ export const apiClient = {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "GET",
       headers,
+      credentials: "include",
     });
 
     if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -27,14 +28,31 @@ export const apiClient = {
     };
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(data),
-    });
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`🔵 [API POST] ${url}`, { data, headers });
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
-    return response.json();
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+
+      console.log(`🔵 [API POST Response] Status: ${response.status}`, response);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`🔴 API Error [${response.status}]:`, errorText);
+        throw new Error(`Error: ${response.status} - ${errorText}`);
+      }
+      const result = await response.json();
+      console.log(`🟢 [API POST Success]`, result);
+      return result;
+    } catch (error) {
+      console.error(`🔴 [API POST Catch]`, error);
+      throw error;
+    }
   },
 
   async put<T>(endpoint: string, data: unknown, token?: string): Promise<T> {
@@ -47,6 +65,7 @@ export const apiClient = {
       method: "PUT",
       headers,
       body: JSON.stringify(data),
+      credentials: "include",
     });
 
     if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -62,6 +81,7 @@ export const apiClient = {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "DELETE",
       headers,
+      credentials: "include",
     });
 
     if (!response.ok) throw new Error(`Error: ${response.status}`);
