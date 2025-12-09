@@ -3,5 +3,10 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    /* Linting - Desactivar errores por variables no usadas */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
 }
