@@ -111,19 +111,6 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
     setCurrentPage(1);
   }, [searchTerm, activeFilter]);
 
-  const getEstadoConfig = (estado: string) => {
-    switch (estado) {
-      case "Confirmada":
-        return { label: "Confirmada", className: "reserva-badge-confirmada" };
-      case "Pendiente":
-        return { label: "Pendiente", className: "reserva-badge-pendiente" };
-      case "Cancelada":
-        return { label: "Cancelada", className: "reserva-badge-cancelada" };
-      default:
-        return { label: estado, className: "reserva-badge-confirmada" };
-    }
-  };
-
   return (
     <VStack>
       {/* Search and Filter Section */}
@@ -247,26 +234,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
               >
                 Precio Total
               </Th>
-              <Th 
-                color="#1F2937" 
-                fontSize="0.85rem" 
-                fontWeight="600" 
-                textTransform="uppercase" 
-                letterSpacing="0.5px" 
-                py={4} 
-                px={5} 
-                borderBottom="2px solid #D7CCC8"
-              >
-                Estado
-              </Th>
-              <Th 
-                borderBottom="2px solid #D7CCC8"
-                py={4} 
-                px={5}
-                textAlign="center"
-              >
-                Acciones
-              </Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -280,7 +248,6 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
               </Tr>
             ) : (
               paginatedReservas.map((reserva) => {
-                const config = getEstadoConfig(reserva.estado);
                 return (
                   <Tr 
                     key={reserva.id} 
@@ -332,11 +299,6 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
                       display={{ base: 'none', md: 'table-cell' }}
                     >
                       ${reserva.precioTotal.toFixed(2)}
-                    </Td>
-                    <Td py={4} px={5}>
-                      <span className={`reserva-badge ${config.className}`}>
-                        {config.label}
-                      </span>
                     </Td>
                     <Td 
                       py={4} 

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import "../../styles/ReservasActionMenu.css";
 
 interface ReservasActionMenuProps {
   reservaId: number;
@@ -14,22 +15,17 @@ export const ReservasActionMenu = ({
   onDelete 
 }: ReservasActionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.top - 100, // Encima del botón
+        left: rect.left - 60, // Ajustado para centrar el menú
+      });
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, [isOpen]);
 
   const handleEdit = () => {
@@ -38,35 +34,36 @@ export const ReservasActionMenu = ({
   };
 
   const handleDelete = () => {
-    if (confirm(`¿Está seguro de que desea eliminar ${reservaNombre}?`)) {
+    if (confirm(`¿Estás seguro de que deseas eliminar ${reservaNombre}?`)) {
       onDelete(reservaId);
       setIsOpen(false);
     }
   };
 
   return (
-    <div className="reserva-action-menu" ref={menuRef}>
+    <div className="action-menu-container">
       <button
-        className="reserva-action-btn"
+        ref={buttonRef}
+        className="action-menu-btn"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Abrir menú de acciones"
+        title="Más opciones"
       >
-        ⋮
+        ⋯
       </button>
 
-      {isOpen && (
-        <div className="reserva-action-menu-content">
-          <button
-            className="reserva-action-menu-item edit"
-            onClick={handleEdit}
-          >
-            ✏️ Editar
+      {isOpen && position && (
+        <div
+          className="action-menu-dropdown"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+          }}
+        >
+          <button className="action-menu-item action-menu-edit" onClick={handleEdit}>
+            Editar
           </button>
-          <button
-            className="reserva-action-menu-item delete"
-            onClick={handleDelete}
-          >
-            🗑️ Eliminar
+          <button className="action-menu-item action-menu-delete" onClick={handleDelete}>
+            Eliminar
           </button>
         </div>
       )}

@@ -9,31 +9,93 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useState, useEffect } from "react";
+import { reservasService, type ReservaResponse } from "../services/reservasService";
+import { cuartosService, type CuartoResponse } from "../services/cuartosService";
+import { useAuth } from "../hooks/useAuth";
+import {
+  calculateMonthlyReservations,
+  calculateRoomsByType,
+} from "../utils/dashboardCalculations";
 import "../styles/ReservationsChart.css";
 
-const data = [
-  { month: "Jan", reservations: 65 },
-  { month: "Feb", reservations: 90 },
-  { month: "Mar", reservations: 87 },
-  { month: "Apr", reservations: 88 },
-  { month: "May", reservations: 75 },
-  { month: "Jun", reservations: 92 },
-];
-
-const roomTypesData = [
-  { tipo: "Simple", ocupadas: 12 },
-  { tipo: "Doble", ocupadas: 18 },
-  { tipo: "Deluxe", ocupadas: 8 },
-  { tipo: "Suite", ocupadas: 5 },
-];
-
 export const ReservationsChart = () => {
+  const { token } = useAuth();
+  const [reservas, setReservas] = useState<ReservaResponse[]>([]);
+  const [cuartos, setCuartos] = useState<CuartoResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [monthlyData, setMonthlyData] = useState<
+    { month: string; reservations: number }[]
+  >([]);
+  const [roomTypeData, setRoomTypeData] = useState<
+    { tipo: string; ocupadas: number }[]
+  >([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!token) return;
+
+      try {
+        setLoading(true);
+        const [reservasResponse, cuartosResponse] = await Promise.all([
+          reservasService.getAllReservas(token),
+          cuartosService.getAllCuartos(token),
+        ]);
+
+        if (reservasResponse.exito && reservasResponse.datos) {
+          setReservas(reservasResponse.datos);
+        }
+
+        if (cuartosResponse.exito && cuartosResponse.datos) {
+          setCuartos(cuartosResponse.datos);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [token]);
+
+  // Calcular datos cuando cambian las reservas o cuartos
+  useEffect(() => {
+    if (reservas.length > 0 || cuartos.length > 0) {
+      const monthly = calculateMonthlyReservations(reservas);
+      const roomTypes = calculateRoomsByType(reservas, cuartos);
+
+      setMonthlyData(monthly);
+      setRoomTypeData(
+        roomTypes.map((rt) => ({
+          tipo: rt.tipo,
+          ocupadas: rt.ocupadas,
+        }))
+      );
+    }
+  }, [reservas, cuartos]);
+
+  if (loading) {
+    return (
+      <div className="charts-wrapper">
+        <div className="chart-container">
+          <h2 className="chart-title">Reservations Trend</h2>
+          <p>Cargando datos...</p>
+        </div>
+        <div className="chart-container">
+          <h2 className="chart-title">Rooms by Type</h2>
+          <p>Cargando datos...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="charts-wrapper">
       <div className="chart-container">
         <h2 className="chart-title">Reservations Trend</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+          <LineChart data={monthlyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#D4C4B0" vertical={false} />
             <XAxis
               dataKey="month"
@@ -65,7 +127,7 @@ export const ReservationsChart = () => {
       <div className="chart-container">
         <h2 className="chart-title">Rooms by Type</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={roomTypesData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+          <BarChart data={roomTypeData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#D4C4B0" vertical={false} />
             <XAxis
               dataKey="tipo"

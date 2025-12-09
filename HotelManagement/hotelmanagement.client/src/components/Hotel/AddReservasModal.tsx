@@ -70,6 +70,21 @@ export const AddReservasModal = ({
     }
   }, [isOpen, token]);
 
+  // Actualizar formData cuando cambia initialData (para modo edición)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        huespedId: initialData.huespedId || 0,
+        cuartoId: initialData.cuartoId || 0,
+        fechaEntrada: initialData.fechaEntrada || "",
+        fechaSalida: initialData.fechaSalida || "",
+        numeroPersonas: initialData.numeroPersonas || 1,
+        precioTotal: initialData.precioTotal || 0,
+        notas: initialData.notas || "",
+      });
+    }
+  }, [initialData]);
+
   // Recalcular precio total cuando cambie cuarto, fecha entrada o fecha salida
   useEffect(() => {
     if (formData.cuartoId && formData.fechaEntrada && formData.fechaSalida) {
@@ -205,10 +220,10 @@ export const AddReservasModal = ({
     <Modal isOpen={isOpen} onClose={handleClose} isCentered>
       <ModalOverlay />
       <ModalContent maxW="700px" maxH="90vh" overflowY="auto">
-        <ModalHeader fontSize="lg" pb={2}>{initialData?.huespedId ? "Editar Reserva" : "Crear Reserva"}</ModalHeader>
+        <ModalHeader fontSize="lg" pb={2}>{initialData?.cuartoId ? "Editar Reserva" : "Crear Reserva"}</ModalHeader>
         <ModalCloseButton />
         <Text className="modal-subtitle" px={6} pb={3} fontSize="sm">
-          Rellene los siguientes campos para añadir una nueva reserva.
+          {initialData?.cuartoId ? "Edite los campos necesarios para actualizar la reserva." : "Rellene los siguientes campos para añadir una nueva reserva."}
         </Text>
         <form onSubmit={handleSubmit}>
           <ModalBody py={3}>
@@ -344,7 +359,7 @@ export const AddReservasModal = ({
               Cancelar
             </Button>
             <Button type="submit" colorScheme="orange" isLoading={isLoading} size="sm">
-              {initialData?.huespedId ? "Actualizar" : "Crear"} Reserva
+              {initialData?.cuartoId ? "Actualizar" : "Crear"} Reserva
             </Button>
           </ModalFooter>
         </form>
