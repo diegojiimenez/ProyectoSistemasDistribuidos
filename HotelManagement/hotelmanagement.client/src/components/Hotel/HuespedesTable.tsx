@@ -195,33 +195,43 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredHuespedes.map((huesped) => {
-              const config = getEstadoConfig(huesped.estado);
-              return (
-                <Tr key={huesped.id} className="huesped-table-row">
-                  <Td className="huesped-table-cell huesped-table-cell-name">
-                    {huesped.nombre} {huesped.apellido}
-                  </Td>
-                  <Td className="huesped-table-cell">{huesped.email}</Td>
-                  <Td className="huesped-table-cell">{huesped.telefono}</Td>
-                  <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
-                  <Td className="huesped-table-cell">{huesped.fechaRegistro}</Td>
-                  <Td>
-                    <span className={`huesped-badge ${config.className}`}>
-                      {config.label}
-                    </span>
-                  </Td>
-                  <Td className="huesped-table-cell-actions">
-                    <HuespedesActionMenu
-                      huespedId={huesped.id}
-                      huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  </Td>
-                </Tr>
-              );
-            })}
+            {filteredHuespedes.length === 0 ? (
+              <Tr>
+                <Td colSpan={7} className="huesped-empty-state">
+                  <div className="huesped-empty-state-content">
+                    <p className="huesped-empty-state-text">Sin datos</p>
+                  </div>
+                </Td>
+              </Tr>
+            ) : (
+              filteredHuespedes.map((huesped) => {
+                const config = getEstadoConfig(huesped.estado);
+                return (
+                  <Tr key={huesped.id} className="huesped-table-row">
+                    <Td className="huesped-table-cell huesped-table-cell-name">
+                      {huesped.nombre} {huesped.apellido}
+                    </Td>
+                    <Td className="huesped-table-cell">{huesped.email}</Td>
+                    <Td className="huesped-table-cell">{huesped.telefono}</Td>
+                    <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
+                    <Td className="huesped-table-cell">{huesped.fechaRegistro}</Td>
+                    <Td>
+                      <span className={`huesped-badge ${config.className}`}>
+                        {config.label}
+                      </span>
+                    </Td>
+                    <Td className="huesped-table-cell-actions">
+                      <HuespedesActionMenu
+                        huespedId={huesped.id}
+                        huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                      />
+                    </Td>
+                  </Tr>
+                );
+              })
+            )}
           </Tbody>
         </Table>
       </Box>

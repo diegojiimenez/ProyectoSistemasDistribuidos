@@ -128,12 +128,13 @@
 
 /* Table Container */
 .huesped-table-container {
-  overflow-x: auto;
+  overflow: visible;
   background-color: var(--color-bg-white);
   border-radius: 0.5rem;
   border: 1px solid var(--color-border-warm);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   width: 100%;
+  position: relative;
 }
 
 /* Table Head */
@@ -189,6 +190,8 @@
 .huesped-table-cell-actions {
   text-align: center;
   padding: 1.25rem 0.75rem;
+  position: relative;
+  overflow: visible;
 }
 
 /* Badge Status - Now using Chakra UI directly */
@@ -311,4 +314,27 @@
   gap: 0.5rem;
   flex-wrap: wrap;
   flex: 0 1 auto;
+}
+
+/* Empty State */
+.huesped-empty-state {
+  text-align: center;
+  padding: 3rem 2rem !important;
+  background-color: #fafafa;
+}
+
+.huesped-empty-state-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.huesped-empty-state-text {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
