@@ -9,8 +9,11 @@ import {
   VStack,
   Box,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HuespedesActionMenu } from "./HuespedesActionMenu";
+import { huespedesService } from "../../services/huespedesService";
+import { useAuth } from "../../hooks/useAuth";
+import { formatearFecha } from "../../utils/dateUtils";
 import "../../styles/HuespedesTable.css";
 
 // Search Icon Component
@@ -45,59 +48,6 @@ interface Huesped {
   estado: "VIP" | "Frecuente" | "Regular" | "Bloqueado";
 }
 
-const mockHuespedes: Huesped[] = [
-  {
-    id: 1,
-    nombre: "Ana",
-    apellido: "García",
-    email: "ana.garcia@email.com",
-    telefono: "+34 600 123 456",
-    documentoIdentidad: "12345678A",
-    fechaRegistro: "2024-06-15",
-    estado: "VIP",
-  },
-  {
-    id: 2,
-    nombre: "John",
-    apellido: "Smith",
-    email: "j.smith@email.com",
-    telefono: "+44 20 7946 0958",
-    documentoIdentidad: "87654321B",
-    fechaRegistro: "2024-06-12",
-    estado: "Frecuente",
-  },
-  {
-    id: 3,
-    nombre: "Maria",
-    apellido: "Rossi",
-    email: "maria.ross@email.com",
-    telefono: "+39 06 6982",
-    documentoIdentidad: "11111111C",
-    fechaRegistro: "2024-08-10",
-    estado: "Regular",
-  },
-  {
-    id: 4,
-    nombre: "Hans",
-    apellido: "Müller",
-    email: "hans.muller@email.com",
-    telefono: "+49 30 206580",
-    documentoIdentidad: "22222222D",
-    fechaRegistro: "2024-05-28",
-    estado: "Frecuente",
-  },
-  {
-    id: 5,
-    nombre: "Carlos",
-    apellido: "Rodríguez",
-    email: "c.rodriguez@email.com",
-    telefono: "+52 55 5093 3000",
-    documentoIdentidad: "33333333E",
-    fechaRegistro: "2024-05-10",
-    estado: "Bloqueado",
-  },
-];
-
 // Paleta de colores con personalidad rústica
 const getEstadoConfig = (estado: string) => {
   switch (estado) {
@@ -129,13 +79,65 @@ const filterOptions: FilterButton[] = [
 interface HuespedesTableProps {
   onEdit: (huespedId: number) => void;
   onDelete: (huespedId: number) => void;
+  onRefreshRef?: (refresh: () => void) => void;
 }
 
-export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
+export const HuespedesTable = ({ onEdit, onDelete, onRefreshRef }: HuespedesTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
-  const [huespedes] = useState<Huesped[]>(mockHuespedes);
+  const [huespedes, setHuespedes] = useState<Huesped[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const { token } = useAuth();
+
+  // Función para cargar huéspedes
+  const loadHuespedes = async () => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await huespedesService.getAllHuespedes(token);
+      
+      if (response.exito && response.datos) {
+        // Mapear datos del backend a la interfaz local
+        const huespedesMapeados: Huesped[] = response.datos.map((h: any) => ({
+          id: h.id,
+          nombre: h.nombre,
+          apellido: h.apellido,
+          email: h.correoElectronico,
+          telefono: h.telefono,
+          documentoIdentidad: h.documentoIdentidad,
+          fechaRegistro: h.fechaRegistro,
+          estado: "Regular", // Por defecto, luego se puede calcular
+        }));
+        setHuespedes(huespedesMapeados);
+        setError(null);
+      } else {
+        setError(response.mensaje || "Error al cargar huéspedes");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al cargar huéspedes");
+      console.error("Error loading huespedes:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Cargar huéspedes cuando el componente monta o cambia el token
+  useEffect(() => {
+    loadHuespedes();
+  }, [token]);
+
+  // Exponer función de recarga al componente padre
+  useEffect(() => {
+    if (onRefreshRef) {
+      onRefreshRef(loadHuespedes);
+    }
+  }, [onRefreshRef, loadHuespedes]);
 
   const filteredHuespedes = huespedes.filter((huesped) => {
     const matchesSearch =
@@ -180,61 +182,81 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <Box className="huesped-table-container">
+          <div className="huesped-empty-state-content">
+            <p className="huesped-empty-state-text">Cargando huéspedes...</p>
+          </div>
+        </Box>
+      )}
+
+      {/* Error State */}
+      {error && !isLoading && (
+        <Box className="huesped-table-container">
+          <div className="huesped-empty-state-content">
+            <p className="huesped-empty-state-text">Error: {error}</p>
+          </div>
+        </Box>
+      )}
+
       {/* Table */}
-      <Box className="huesped-table-container">
-        <Table>
-          <Thead className="huesped-table-head">
-            <Tr className="huesped-table-header">
-              <Th className="huesped-table-header-cell">Nombre Completo</Th>
-              <Th className="huesped-table-header-cell">Email</Th>
-              <Th className="huesped-table-header-cell">Teléfono</Th>
-              <Th className="huesped-table-header-cell">DNI</Th>
-              <Th className="huesped-table-header-cell">Fecha Registro</Th>
-              <Th className="huesped-table-header-cell">Estado</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {filteredHuespedes.length === 0 ? (
-              <Tr>
-                <Td colSpan={7} className="huesped-empty-state">
-                  <div className="huesped-empty-state-content">
-                    <p className="huesped-empty-state-text">Sin datos</p>
-                  </div>
-                </Td>
+      {!isLoading && !error && (
+        <Box className="huesped-table-container">
+          <Table>
+            <Thead className="huesped-table-head">
+              <Tr className="huesped-table-header">
+                <Th className="huesped-table-header-cell">Nombre Completo</Th>
+                <Th className="huesped-table-header-cell">Email</Th>
+                <Th className="huesped-table-header-cell">Teléfono</Th>
+                <Th className="huesped-table-header-cell">DNI</Th>
+                <Th className="huesped-table-header-cell">Fecha Registro</Th>
+                <Th className="huesped-table-header-cell">Estado</Th>
+                <Th></Th>
               </Tr>
-            ) : (
-              filteredHuespedes.map((huesped) => {
-                const config = getEstadoConfig(huesped.estado);
-                return (
-                  <Tr key={huesped.id} className="huesped-table-row">
-                    <Td className="huesped-table-cell huesped-table-cell-name">
-                      {huesped.nombre} {huesped.apellido}
-                    </Td>
-                    <Td className="huesped-table-cell">{huesped.email}</Td>
-                    <Td className="huesped-table-cell">{huesped.telefono}</Td>
-                    <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
-                    <Td className="huesped-table-cell">{huesped.fechaRegistro}</Td>
-                    <Td>
-                      <span className={`huesped-badge ${config.className}`}>
-                        {config.label}
-                      </span>
-                    </Td>
-                    <Td className="huesped-table-cell-actions">
-                      <HuespedesActionMenu
-                        huespedId={huesped.id}
-                        huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                      />
-                    </Td>
-                  </Tr>
-                );
-              })
-            )}
-          </Tbody>
-        </Table>
-      </Box>
+            </Thead>
+            <Tbody>
+              {filteredHuespedes.length === 0 ? (
+                <Tr>
+                  <Td colSpan={7} className="huesped-empty-state">
+                    <div className="huesped-empty-state-content">
+                      <p className="huesped-empty-state-text">Sin datos</p>
+                    </div>
+                  </Td>
+                </Tr>
+              ) : (
+                filteredHuespedes.map((huesped) => {
+                  const config = getEstadoConfig(huesped.estado);
+                  return (
+                    <Tr key={huesped.id} className="huesped-table-row">
+                      <Td className="huesped-table-cell huesped-table-cell-name">
+                        {huesped.nombre} {huesped.apellido}
+                      </Td>
+                      <Td className="huesped-table-cell">{huesped.email}</Td>
+                      <Td className="huesped-table-cell">{huesped.telefono}</Td>
+                      <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
+                      <Td className="huesped-table-cell">{formatearFecha(huesped.fechaRegistro)}</Td>
+                      <Td>
+                        <span className={`huesped-badge ${config.className}`}>
+                          {config.label}
+                        </span>
+                      </Td>
+                      <Td className="huesped-table-cell-actions">
+                        <HuespedesActionMenu
+                          huespedId={huesped.id}
+                          huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
+                          onEdit={onEdit}
+                          onDelete={onDelete}
+                        />
+                      </Td>
+                    </Tr>
+                  );
+                })
+              )}
+            </Tbody>
+          </Table>
+        </Box>
+      )}
 
       {/* Pagination and Info Footer */}
       <div className="huesped-pagination">

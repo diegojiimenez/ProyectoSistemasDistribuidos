@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
@@ -16,6 +16,7 @@ export const ClientesPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingHuesped, setEditingHuesped] = useState<HuespedEdit | null>(null);
   const { token } = useAuth();
+  const tableRefresh = useRef<(() => void) | null>(null);
 
   const handleAddHuesped = async (data: HuespedesFormData) => {
     if (!token) {
@@ -41,7 +42,10 @@ export const ClientesPage = () => {
       if (response.exito) {
         console.log("Huésped creado exitosamente:", response.datos);
         setIsModalOpen(false);
-        // Aquí podrías hacer que la tabla se recargue o actualizar el estado
+        // Refrescar la tabla
+        if (tableRefresh.current) {
+          tableRefresh.current();
+        }
       } else {
         setError(response.mensaje || "Error al crear el huésped");
       }
@@ -78,6 +82,10 @@ export const ClientesPage = () => {
         console.log("Huésped actualizado exitosamente:", response.datos);
         setIsModalOpen(false);
         setEditingHuesped(null);
+        // Refrescar la tabla
+        if (tableRefresh.current) {
+          tableRefresh.current();
+        }
       } else {
         setError(response.mensaje || "Error al actualizar el huésped");
       }
@@ -88,20 +96,40 @@ export const ClientesPage = () => {
     }
   };
 
-  const handleOpenEditModal = (huespedId: number) => {
-    // TODO: Obtener los datos del huésped por ID desde la API
-    // Por ahora, simplemente abrimos el modal en modo edición
-    setEditingHuesped({
-      id: huespedId,
-      nombre: "",
-      apellido: "",
-      email: "",
-      telefono: "",
-      documentoIdentidad: "",
-      direccion: "",
-      estado: "Regular",
-    });
-    setIsModalOpen(true);
+  const handleOpenEditModal = async (huespedId: number) => {
+    if (!token) {
+      setError("No hay token de autenticación");
+      return;
+    }
+
+    setError(null);
+
+    try {
+      const response = await huespedesService.getHuespedById(huespedId, token);
+
+      if (response.exito && response.datos) {
+        const huesped = response.datos;
+        const editData: HuespedEdit = {
+          id: huesped.id,
+          nombre: huesped.nombre,
+          apellido: huesped.apellido,
+          email: huesped.correoElectronico,
+          telefono: huesped.telefono,
+          documentoIdentidad: huesped.documentoIdentidad,
+          direccion: huesped.direccion,
+          estado: "Regular",
+        };
+        
+        setEditingHuesped(editData);
+        setIsModalOpen(true);
+      } else {
+        setError(response.mensaje || "Error al obtener los datos del huésped");
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+      setError(errorMessage);
+      console.error("Error al obtener huésped:", err);
+    }
   };
 
   const handleDeleteHuesped = async (huespedId: number) => {
@@ -117,7 +145,10 @@ export const ClientesPage = () => {
 
       if (response.exito) {
         console.log("Huésped eliminado exitosamente");
-        // Aquí podrías hacer que la tabla se recargue o actualizar el estado
+        // Refrescar la tabla
+        if (tableRefresh.current) {
+          tableRefresh.current();
+        }
       } else {
         setError(response.mensaje || "Error al eliminar el huésped");
       }
@@ -160,6 +191,9 @@ export const ClientesPage = () => {
           <HuespedesTable 
             onEdit={handleOpenEditModal}
             onDelete={handleDeleteHuesped}
+            onRefreshRef={(refresh) => {
+              tableRefresh.current = refresh;
+            }}
           />
         </div>
       </div>

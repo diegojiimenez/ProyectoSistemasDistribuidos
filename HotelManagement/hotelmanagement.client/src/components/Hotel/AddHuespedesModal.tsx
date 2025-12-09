@@ -51,17 +51,19 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit, initialData }: Ad
     if (isOpen) {
       if (initialData?.id) {
         // Modo edición
+        console.log("Modal en modo edición con datos:", initialData);
         setFormData({
-          nombre: initialData.nombre,
-          apellido: initialData.apellido,
-          email: initialData.email,
-          telefono: initialData.telefono,
-          documentoIdentidad: initialData.documentoIdentidad,
-          direccion: initialData.direccion,
-          estado: initialData.estado,
+          nombre: initialData.nombre || "",
+          apellido: initialData.apellido || "",
+          email: initialData.email || "",
+          telefono: initialData.telefono || "",
+          documentoIdentidad: initialData.documentoIdentidad || "",
+          direccion: initialData.direccion || "",
+          estado: initialData.estado || "Regular",
         });
       } else {
         // Modo creación
+        console.log("Modal en modo creación");
         setFormData({
           nombre: "",
           apellido: "",
@@ -74,7 +76,7 @@ export const AddHuespedesModal = ({ isOpen, onClose, onSubmit, initialData }: Ad
       }
       setErrors({});
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData?.id, initialData?.nombre, initialData?.apellido, initialData?.email, initialData?.telefono, initialData?.documentoIdentidad, initialData?.direccion]);
 
   const validateForm = () => {
     const newErrors: Partial<HuespedesFormData> = {};

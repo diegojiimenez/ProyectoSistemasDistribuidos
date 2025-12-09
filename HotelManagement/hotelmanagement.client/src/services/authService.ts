@@ -19,11 +19,20 @@ export interface RegistroRequest {
 
 export const authService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    return apiClient.post<LoginResponse>("/auth/login", data);
+    const response = await apiClient.post<LoginResponse>("/auth/login", {
+      nombreUsuario: data.nombreUsuario,
+      password: data.password,
+    });
+    return response;
   },
 
   async registro(data: RegistroRequest): Promise<{ message: string }> {
-    return apiClient.post<{ message: string }>("/auth/registro", data);
+    const response = await apiClient.post<{ message: string }>("/auth/registro", {
+      nombreUsuario: data.nombreUsuario,
+      password: data.password,
+      rol: data.rol || "Usuario",
+    });
+    return response;
   },
 
   saveToken(token: string): void {
