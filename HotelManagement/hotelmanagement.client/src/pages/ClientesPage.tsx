@@ -3,6 +3,7 @@ import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
 import { huespedesService } from "../services/huespedesService";
 import { useAuth } from "../hooks/useAuth";
+import clientesImage from "../assets/images/imagenClientes.jpg";
 import "../styles/ClientesPage.css";
 
 interface HuespedEdit extends HuespedesFormData {
@@ -160,7 +161,7 @@ export const ClientesPage = () => {
       <div className="clientes-layout">
         {/* Left Side - Banner */}
         <div className="clientes-banner">
-          <img src="/src/assets/images/imagenClientes.jpg" alt="Clientes Banner" className="banner-image" />
+          <img src={clientesImage} alt="Clientes Banner" className="banner-image" />
         </div>
 
         {/* Right Side - Table Content */}

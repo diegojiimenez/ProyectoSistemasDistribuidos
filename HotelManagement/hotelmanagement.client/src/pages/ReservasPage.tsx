@@ -3,6 +3,7 @@ import { reservasService } from "../services/reservasService";
 import { useAuth } from "../hooks/useAuth";
 import { ReservasTable } from "../components/Hotel/ReservasTable";
 import { AddReservasModal } from "../components/Hotel/AddReservasModal";
+import reservasImage from "../assets/images/imagenReservas.jpg";
 import "../styles/ReservasPage.css";
 
 type ReservasFormData = {
@@ -168,7 +169,7 @@ export const ReservasPage = () => {
       <div className="reservas-layout">
         {/* Left Side - Banner */}
         <div className="reservas-banner">
-          <img src="/src/assets/images/imagenReservas.jpg" alt="Reservas Banner" className="banner-image" />
+          <img src={reservasImage} alt="Reservas Banner" className="banner-image" />
         </div>
 
         {/* Right Side - Table Content */}
