@@ -19,6 +19,7 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isHabitacionesModalOpen, setIsHabitacionesModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -29,12 +30,19 @@ export const Navbar = () => {
     // Dispatchear un evento o usar context para abrir el modal
     const event = new CustomEvent("openClienteModal");
     window.dispatchEvent(event);
+    setIsMobileMenuOpen(false);
   };
 
   const handleAddReserva = () => {
     // Dispatchear un evento para abrir el modal de reservas
     const event = new CustomEvent("openReservaModal");
     window.dispatchEvent(event);
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleNavClick = (href: string) => {
+    navigate(href);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -48,7 +56,7 @@ export const Navbar = () => {
             {navItems.map((item) => (
               <button
                 key={item.href}
-                onClick={() => navigate(item.href)}
+                onClick={() => handleNavClick(item.href)}
                 className={`nav-link-btn ${location.pathname === item.href ? 'active' : ''}`}
                 title={item.label}
               >
