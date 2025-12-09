@@ -65,6 +65,12 @@ export const ReservationsChart = () => {
       const monthly = calculateMonthlyReservations(reservas);
       const roomTypes = calculateRoomsByType(reservas, cuartos);
 
+      console.log("📊 Dashboard Data Debug:");
+      console.log("Reservas cargadas:", reservas);
+      console.log("Cuartos cargados:", cuartos);
+      console.log("Datos mensuales calculados:", monthly);
+      console.log("Datos por tipo de cuarto:", roomTypes);
+
       setMonthlyData(monthly);
       setRoomTypeData(
         roomTypes.map((rt) => ({

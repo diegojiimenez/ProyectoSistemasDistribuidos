@@ -26,34 +26,21 @@ export const calculateDashboardStats = (
   reservas: ReservaResponse[],
   cuartos: CuartoResponse[]
 ): DashboardStats => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // Contar todas las reservas no canceladas
+  const activeReservations = reservas.filter(
+    (r) => r.estado !== "Cancelada"
+  ).length;
 
-  // Reservas activas (aquellas cuya fecha de entrada ya pasó pero no la de salida)
-  const activeReservations = reservas.filter((r) => {
-    const fechaEntrada = new Date(r.fechaEntrada);
-    const fechaSalida = new Date(r.fechaSalida);
-    fechaEntrada.setHours(0, 0, 0, 0);
-    fechaSalida.setHours(0, 0, 0, 0);
-    return fechaEntrada <= today && fechaSalida >= today;
-  }).length;
+  // Contar todos los huéspedes en reservas no canceladas
+  const guestsCheckedIn = reservas.filter(
+    (r) => r.estado !== "Cancelada"
+  ).length;
 
-  // Huéspedes registrados/con check-in
-  const guestsCheckedIn = reservas.filter((r) => {
-    const fechaEntrada = new Date(r.fechaEntrada);
-    fechaEntrada.setHours(0, 0, 0, 0);
-    return fechaEntrada <= today && r.estado !== "Cancelada";
-  }).length;
-
-  // Ocupación actual
+  // Ocupación basada en todas las reservas activas (no canceladas)
   const totalRooms = cuartos.length;
-  const occupiedRooms = reservas.filter((r) => {
-    const fechaEntrada = new Date(r.fechaEntrada);
-    const fechaSalida = new Date(r.fechaSalida);
-    fechaEntrada.setHours(0, 0, 0, 0);
-    fechaSalida.setHours(0, 0, 0, 0);
-    return fechaEntrada <= today && fechaSalida >= today && r.estado !== "Cancelada";
-  }).length;
+  const occupiedRooms = reservas.filter(
+    (r) => r.estado !== "Cancelada"
+  ).length;
 
   const currentOccupancy =
     totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
@@ -76,7 +63,10 @@ export const calculateMonthlyReservations = (
   reservas: ReservaResponse[]
 ): MonthlyReservationData[] => {
   const today = new Date();
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
   const monthsData: MonthlyReservationData[] = [];
 
   // Obtener los últimos 6 meses
@@ -112,9 +102,6 @@ export const calculateRoomsByType = (
   reservas: ReservaResponse[],
   cuartos: CuartoResponse[]
 ): RoomTypeData[] => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
   // Mapeo de tipos de cuartos
   const tipoMap: { [key: number]: string } = {
     [TipoCuarto.Individual]: "Individual",
@@ -130,25 +117,16 @@ export const calculateRoomsByType = (
     cuartosPorTipo[tipo] = (cuartosPorTipo[tipo] || 0) + 1;
   });
 
-  // Contar cuartos ocupados por tipo
+  // Contar cuartos ocupados por tipo (todas las reservas no canceladas)
   const ocupadosPorTipo: { [key: string]: number } = {};
   reservas.forEach((reserva) => {
+    if (reserva.estado === "Cancelada") return;
+
     const cuarto = cuartos.find((c) => c.id === reserva.cuartoId);
     if (!cuarto) return;
 
-    const fechaEntrada = new Date(reserva.fechaEntrada);
-    const fechaSalida = new Date(reserva.fechaSalida);
-    fechaEntrada.setHours(0, 0, 0, 0);
-    fechaSalida.setHours(0, 0, 0, 0);
-
-    if (
-      fechaEntrada <= today &&
-      fechaSalida >= today &&
-      reserva.estado !== "Cancelada"
-    ) {
-      const tipo = tipoMap[cuarto.tipo] || "Desconocido";
-      ocupadosPorTipo[tipo] = (ocupadosPorTipo[tipo] || 0) + 1;
-    }
+    const tipo = tipoMap[cuarto.tipo] || "Desconocido";
+    ocupadosPorTipo[tipo] = (ocupadosPorTipo[tipo] || 0) + 1;
   });
 
   // Generar datos para el gráfico
