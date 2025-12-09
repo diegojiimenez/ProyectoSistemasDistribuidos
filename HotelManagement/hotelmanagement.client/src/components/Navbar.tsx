@@ -28,6 +28,12 @@ export const Navbar = () => {
     window.dispatchEvent(event);
   };
 
+  const handleAddReserva = () => {
+    // Dispatchear un evento para abrir el modal de reservas
+    const event = new CustomEvent("openReservaModal");
+    window.dispatchEvent(event);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-content">
@@ -65,6 +71,11 @@ export const Navbar = () => {
         {location.pathname === "/clientes" && (
           <button className="btn-add-cliente" onClick={handleAddCliente}>
             + Añadir Nuevo Huésped
+          </button>
+        )}
+        {location.pathname === "/reservas" && (
+          <button className="btn-add-cliente" onClick={handleAddReserva}>
+            + Añadir Nueva Reserva
           </button>
         )}
       </div>

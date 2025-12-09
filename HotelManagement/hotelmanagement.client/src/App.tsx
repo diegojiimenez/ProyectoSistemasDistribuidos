@@ -3,6 +3,7 @@ import './App.css';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ClientesPage } from './pages/ClientesPage';
+import { ReservasPage } from './pages/ReservasPage';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -25,6 +26,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ClientesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reservas"
+            element={
+              <ProtectedRoute>
+                <ReservasPage />
               </ProtectedRoute>
             }
           />
