@@ -58,6 +58,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
   const [huespedes, setHuespedes] = useState<HuespedResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { token } = useAuth();
 
   // Cargar huéspedes del backend
@@ -67,11 +68,13 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
       
       try {
         setLoading(true);
+        setError(null);
         const response = await huespedesService.getAllHuespedes(token);
         if (response.exito && response.datos) {
           setHuespedes(response.datos);
         }
       } catch (error) {
+        setError("Error al cargar los huéspedes");
         console.error("Error loading huéspedes:", error);
       } finally {
         setLoading(false);
@@ -144,7 +147,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
       </div>
 
       {/* Loading State */}
-      {isLoading && (
+      {loading && (
         <Box className="huesped-table-container">
           <div className="huesped-empty-state-content">
             <p className="huesped-empty-state-text">Cargando huéspedes...</p>
@@ -153,7 +156,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
       )}
 
       {/* Error State */}
-      {error && !isLoading && (
+      {error && !loading && (
         <Box className="huesped-table-container">
           <div className="huesped-empty-state-content">
             <p className="huesped-empty-state-text">Error: {error}</p>

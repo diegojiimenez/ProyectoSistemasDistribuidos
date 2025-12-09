@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "../components/Navbar";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
