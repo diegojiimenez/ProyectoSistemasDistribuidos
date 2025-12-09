@@ -15,12 +15,12 @@ export interface ReservaResponse {
   huespedId: number;
   huespedNombre: string;
   cuartoId: number;
-  numeroCuarto: number;
+  cuartoNumero: string;
   fechaEntrada: string;
   fechaSalida: string;
   estado: string;
   precioTotal: number;
-  notas?: string;
+  observaciones?: string;
   fechaCreacion: string;
 }
 

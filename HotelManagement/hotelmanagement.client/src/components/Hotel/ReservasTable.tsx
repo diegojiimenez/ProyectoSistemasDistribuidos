@@ -78,8 +78,8 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
   const filteredReservas = reservas.filter((reserva) => {
     return (
       reserva.huespedNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reserva.numeroCuarto.toString().includes(searchTerm) ||
-      reserva.estado.toLowerCase().includes(searchTerm.toLowerCase())
+      (reserva.cuartoNumero && reserva.cuartoNumero.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (reserva.estado && reserva.estado.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
 
@@ -243,7 +243,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
                       px={5}
                       display={{ base: 'none', md: 'table-cell' }}
                     >
-                      Cuarto {reserva.numeroCuarto}
+                      {reserva.cuartoNumero || '-'}
                     </Td>
                     <Td 
                       color="#6F4E37" 

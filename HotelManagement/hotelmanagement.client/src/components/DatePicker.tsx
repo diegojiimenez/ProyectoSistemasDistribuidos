@@ -19,9 +19,14 @@ export const DatePicker = ({ value, onChange, placeholder = "Seleccionar fecha..
   };
 
   const handleDayClick = (day: number) => {
-    const selectedDate = new Date(month.getFullYear(), month.getMonth(), day);
-    const timepart = value ? new Date(value).toTimeString().split(" ")[0] : "12:00:00";
-    const isoString = selectedDate.toISOString().split("T")[0] + `T${timepart}`;
+    // Crear la fecha sin afectar la zona horaria
+    const year = month.getFullYear();
+    const monthNum = month.getMonth();
+    const timepart = value ? new Date(value).toTimeString().split(" ")[0] : "00:00:00";
+    
+    // Crear la fecha en formato ISO directamente
+    const dateString = `${year}-${String(monthNum + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const isoString = `${dateString}T${timepart}`;
     onChange(isoString);
   };
 
