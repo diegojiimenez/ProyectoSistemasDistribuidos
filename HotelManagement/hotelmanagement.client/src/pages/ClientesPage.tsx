@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
-import { Sidebar } from "../components/Sidebar";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
 import { huespedesService } from "../services/huespedesService";
@@ -16,6 +15,16 @@ export const ClientesPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingHuesped, setEditingHuesped] = useState<HuespedEdit | null>(null);
   const { token } = useAuth();
+
+  useEffect(() => {
+    const handleOpenModal = () => {
+      setIsModalOpen(true);
+      setEditingHuesped(null);
+    };
+
+    window.addEventListener("openClienteModal", handleOpenModal);
+    return () => window.removeEventListener("openClienteModal", handleOpenModal);
+  }, []);
 
   const handleAddHuesped = async (data: HuespedesFormData) => {
     if (!token) {
@@ -135,27 +144,13 @@ export const ClientesPage = () => {
 
       {/* Main Layout */}
       <div className="clientes-layout">
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Left Side - Banner */}
+        <div className="clientes-banner">
+          <img src="/src/assets/images/imagenClientes.jpg" alt="Clientes Banner" className="banner-image" />
+        </div>
 
-        {/* Main Content */}
+        {/* Right Side - Table Content */}
         <div className="clientes-content">
-          {/* Header con Título y Botones */}
-          <div className="clientes-header">
-            <div className="clientes-title-section">
-              <h1 className="clientes-title">Listado de Huéspedes</h1>
-              <p className="clientes-subtitle">Gestiona toda la información de los huéspedes registrados.</p>
-            </div>
-            <div className="clientes-actions">
-              <button className="btn-export">
-                Exportar
-              </button>
-              <button className="btn-add-huesped" onClick={() => setIsModalOpen(true)}>
-                Añadir Huésped
-              </button>
-            </div>
-          </div>
-
           {/* Tabla de Huéspedes */}
           <HuespedesTable 
             onEdit={handleOpenEditModal}

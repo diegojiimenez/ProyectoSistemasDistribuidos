@@ -169,28 +169,28 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
         {/* Filter Buttons - Segmented Control Style */}
         <div className="huesped-filter-buttons">
           {filterOptions.map((filter) => (
-            <Button
+            <button
               key={filter.key}
               onClick={() => setActiveFilter(filter.key)}
               className={`huesped-filter-btn ${activeFilter === filter.key ? "active" : ""}`}
             >
               {filter.label}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Table */}
-      <Box className="huesped-table-container">
-        <Table>
-          <Thead className="huesped-table-head">
-            <Tr className="huesped-table-header">
-              <Th className="huesped-table-header-cell">Nombre Completo</Th>
-              <Th className="huesped-table-header-cell">Email</Th>
-              <Th className="huesped-table-header-cell">Teléfono</Th>
-              <Th className="huesped-table-header-cell">DNI</Th>
-              <Th className="huesped-table-header-cell">Fecha Registro</Th>
-              <Th className="huesped-table-header-cell">Estado</Th>
+      <Box className="huesped-table-container" bg="#E8DCC8" borderRadius="md" overflow="hidden">
+        <Table variant="unstyled">
+          <Thead bg="#E8DCC8">
+            <Tr>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Nombre Completo</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Email</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Teléfono</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">DNI</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Fecha Registro</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Estado</Th>
               <Th></Th>
             </Tr>
           </Thead>
@@ -207,20 +207,20 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
               filteredHuespedes.map((huesped) => {
                 const config = getEstadoConfig(huesped.estado);
                 return (
-                  <Tr key={huesped.id} className="huesped-table-row">
-                    <Td className="huesped-table-cell huesped-table-cell-name">
+                  <Tr key={huesped.id} bg="#FAFAFA" borderBottom="1px solid #D7CCC8" _hover={{ bg: "#F5F5F5" }}>
+                    <Td color="#6F4E37" fontSize="0.95rem" fontWeight="500" py={4} px={5}>
                       {huesped.nombre} {huesped.apellido}
                     </Td>
-                    <Td className="huesped-table-cell">{huesped.email}</Td>
-                    <Td className="huesped-table-cell">{huesped.telefono}</Td>
-                    <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
-                    <Td className="huesped-table-cell">{huesped.fechaRegistro}</Td>
-                    <Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.email}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.telefono}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.documentoIdentidad}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.fechaRegistro}</Td>
+                    <Td py={4} px={5}>
                       <span className={`huesped-badge ${config.className}`}>
                         {config.label}
                       </span>
                     </Td>
-                    <Td className="huesped-table-cell-actions">
+                    <Td py={4} px={5}>
                       <HuespedesActionMenu
                         huespedId={huesped.id}
                         huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
@@ -242,36 +242,32 @@ export const HuespedesTable = ({ onEdit, onDelete }: HuespedesTableProps) => {
           Mostrando 1 a {filteredHuespedes.length} de 123 huéspedes
         </p>
         <div className="huesped-pagination-buttons">
-          <Button
+          <button
             className="huesped-pagination-btn"
             disabled
-            as="button"
           >
             ←
-          </Button>
+          </button>
           {[1, 2, 3].map((page) => (
-            <Button
+            <button
               key={page}
               className={`huesped-pagination-btn ${currentPage === page ? "active" : ""}`}
               onClick={() => setCurrentPage(page)}
-              as="button"
             >
               {page}
-            </Button>
+            </button>
           ))}
           <span className="huesped-pagination-ellipsis">...</span>
-          <Button
+          <button
             className="huesped-pagination-btn"
-            as="button"
           >
             12
-          </Button>
-          <Button
+          </button>
+          <button
             className="huesped-pagination-btn"
-            as="button"
           >
             →
-          </Button>
+          </button>
         </div>
       </div>
     </VStack>
