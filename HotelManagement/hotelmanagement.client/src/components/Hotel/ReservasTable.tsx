@@ -35,17 +35,7 @@ const SearchIcon = () => (
   </svg>
 );
 
-interface FilterButton {
-  label: string;
-  key: string;
-}
 
-const filterOptions: FilterButton[] = [
-  { label: "Todas", key: "todas" },
-  { label: "Confirmada", key: "confirmada" },
-  { label: "Pendiente", key: "pendiente" },
-  { label: "Cancelada", key: "cancelada" },
-];
 
 interface ReservasTableProps {
   onEdit: (reservaId: number) => void;
@@ -54,8 +44,8 @@ interface ReservasTableProps {
 }
 
 export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTableProps) => {
+  const ITEMS_PER_PAGE = 7;
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("todas");
   const [reservas, setReservas] = useState<ReservaResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -86,31 +76,23 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
   }, [token, refreshTrigger]);
 
   const filteredReservas = reservas.filter((reserva) => {
-    const matchesSearch =
+    return (
       reserva.huespedNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reserva.numeroCuarto.toString().includes(searchTerm) ||
-      reserva.estado.toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (activeFilter === "todas") return matchesSearch;
-    if (activeFilter === "confirmada" && reserva.estado === "Confirmada") return matchesSearch;
-    if (activeFilter === "pendiente" && reserva.estado === "Pendiente") return matchesSearch;
-    if (activeFilter === "cancelada" && reserva.estado === "Cancelada") return matchesSearch;
-
-    return false;
+      reserva.estado.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
-  const getEstadoConfig = (estado: string) => {
-    switch (estado) {
-      case "Confirmada":
-        return { label: "Confirmada", className: "reserva-badge-confirmada" };
-      case "Pendiente":
-        return { label: "Pendiente", className: "reserva-badge-pendiente" };
-      case "Cancelada":
-        return { label: "Cancelada", className: "reserva-badge-cancelada" };
-      default:
-        return { label: estado, className: "reserva-badge-confirmada" };
-    }
-  };
+  // Cálculo de paginación
+  const totalPages = Math.ceil(filteredReservas.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedReservas = filteredReservas.slice(startIndex, endIndex);
+
+  // Reset a página 1 cuando cambia la búsqueda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   return (
     <VStack>
@@ -127,18 +109,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
           />
         </div>
 
-        {/* Filter Buttons - Segmented Control Style */}
-        <div className="reserva-filter-buttons">
-          {filterOptions.map((filter) => (
-            <button
-              key={filter.key}
-              onClick={() => setActiveFilter(filter.key)}
-              className={`reserva-filter-btn ${activeFilter === filter.key ? "active" : ""}`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+
       </div>
 
       {/* Loading State */}
@@ -164,21 +135,10 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
         className="reserva-table-container" 
         bg="#E8DCC8" 
         borderRadius="md" 
-        overflow="auto"
-        sx={{
-          '@media (max-width: 768px)': {
-            overflow: 'auto',
-            WebkitOverflowScrolling: 'touch',
-          }
-        }}
+        overflow="visible"
       >
         <Table 
           variant="unstyled"
-          sx={{
-            '@media (max-width: 768px)': {
-              minWidth: '600px',
-            }
-          }}
         >
           <Thead bg="#E8DCC8">
             <Tr>
@@ -246,30 +206,11 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
               >
                 Precio Total
               </Th>
-              <Th 
-                color="#1F2937" 
-                fontSize="0.85rem" 
-                fontWeight="600" 
-                textTransform="uppercase" 
-                letterSpacing="0.5px" 
-                py={4} 
-                px={5} 
-                borderBottom="2px solid #D7CCC8"
-              >
-                Estado
-              </Th>
-              <Th 
-                borderBottom="2px solid #D7CCC8"
-                py={4} 
-                px={5}
-                textAlign="center"
-              >
-                Acciones
-              </Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {filteredReservas.length === 0 ? (
+            {paginatedReservas.length === 0 ? (
               <Tr>
                 <Td colSpan={7} className="reserva-empty-state">
                   <div className="reserva-empty-state-content">
@@ -278,8 +219,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
                 </Td>
               </Tr>
             ) : (
-              filteredReservas.map((reserva) => {
-                const config = getEstadoConfig(reserva.estado);
+              paginatedReservas.map((reserva) => {
                 return (
                   <Tr 
                     key={reserva.id} 
@@ -332,11 +272,6 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
                     >
                       ${reserva.precioTotal.toFixed(2)}
                     </Td>
-                    <Td py={4} px={5}>
-                      <span className={`reserva-badge ${config.className}`}>
-                        {config.label}
-                      </span>
-                    </Td>
                     <Td 
                       py={4} 
                       px={5}
@@ -362,32 +297,30 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
       {/* Pagination and Info Footer */}
       <div className="reserva-pagination">
         <p className="reserva-info-text">
-          Mostrando 1 a {filteredReservas.length} de {reservas.length} reservas
+          Mostrando {filteredReservas.length === 0 ? 0 : startIndex + 1} a {Math.min(endIndex, filteredReservas.length)} de {filteredReservas.length} reservas
         </p>
         <div className="reserva-pagination-buttons">
           <button
             className="reserva-pagination-btn"
-            disabled
+            disabled={currentPage === 1 || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           >
             ←
           </button>
-          {[1, 2, 3].map((page) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               className={`reserva-pagination-btn ${currentPage === page ? "active" : ""}`}
               onClick={() => setCurrentPage(page)}
+              disabled={totalPages <= 1}
             >
               {page}
             </button>
           ))}
-          <span className="reserva-pagination-ellipsis">...</span>
           <button
             className="reserva-pagination-btn"
-          >
-            12
-          </button>
-          <button
-            className="reserva-pagination-btn"
+            disabled={currentPage === totalPages || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           >
             →
           </button>

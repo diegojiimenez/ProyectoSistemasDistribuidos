@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
 import { huespedesService } from "../services/huespedesService";
 import { useAuth } from "../hooks/useAuth";
+import { processErrorMessage } from "../utils/errorHandler";
+import clientesImage from "../assets/images/imagenClientes.jpg";
 import "../styles/ClientesPage.css";
 
 interface HuespedEdit extends HuespedesFormData {
@@ -15,7 +17,6 @@ export const ClientesPage = () => {
   const [editingHuesped, setEditingHuesped] = useState<HuespedEdit | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { token } = useAuth();
-  const tableRefresh = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const handleOpenModal = () => {
@@ -53,11 +54,12 @@ export const ClientesPage = () => {
         setIsModalOpen(false);
         setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
-        setError(response.mensaje || "Error al crear el huésped");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al crear el huésped");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al crear huésped:", err);
     }
   };
@@ -90,11 +92,12 @@ export const ClientesPage = () => {
         setEditingHuesped(null);
         setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
-        setError(response.mensaje || "Error al actualizar el huésped");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al actualizar el huésped");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al actualizar huésped:", err);
     }
   };
@@ -121,11 +124,12 @@ export const ClientesPage = () => {
         });
         setIsModalOpen(true);
       } else {
-        setError(response.mensaje || "Error al cargar el huésped");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al cargar el huésped");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al cargar huésped:", err);
     }
   };
@@ -145,11 +149,12 @@ export const ClientesPage = () => {
         console.log("Huésped eliminado exitosamente");
         setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
-        setError(response.mensaje || "Error al eliminar el huésped");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al eliminar el huésped");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al eliminar huésped:", err);
     }
   };
@@ -160,7 +165,7 @@ export const ClientesPage = () => {
       <div className="clientes-layout">
         {/* Left Side - Banner */}
         <div className="clientes-banner">
-          <img src="/src/assets/images/imagenClientes.jpg" alt="Clientes Banner" className="banner-image" />
+          <img src={clientesImage} alt="Clientes Banner" className="banner-image" />
         </div>
 
         {/* Right Side - Table Content */}

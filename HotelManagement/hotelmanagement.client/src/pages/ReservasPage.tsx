@@ -3,6 +3,8 @@ import { reservasService } from "../services/reservasService";
 import { useAuth } from "../hooks/useAuth";
 import { ReservasTable } from "../components/Hotel/ReservasTable";
 import { AddReservasModal } from "../components/Hotel/AddReservasModal";
+import { processErrorMessage } from "../utils/errorHandler";
+import reservasImage from "../assets/images/imagenReservas.jpg";
 import "../styles/ReservasPage.css";
 
 type ReservasFormData = {
@@ -10,6 +12,7 @@ type ReservasFormData = {
   cuartoId: number;
   fechaEntrada: string;
   fechaSalida: string;
+  numeroPersonas: number;
   precioTotal: number;
   notas?: string;
 };
@@ -50,6 +53,7 @@ export const ReservasPage = () => {
           cuartoId: data.cuartoId,
           fechaEntrada: data.fechaEntrada,
           fechaSalida: data.fechaSalida,
+          numeroPersonas: data.numeroPersonas,
           precioTotal: data.precioTotal,
           notas: data.notas,
         },
@@ -61,11 +65,12 @@ export const ReservasPage = () => {
         setIsModalOpen(false);
         setRefreshTrigger(prev => prev + 1);
       } else {
-        setError(response.mensaje || "Error al crear la reserva");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al crear la reserva");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al crear reserva:", err);
     }
   };
@@ -86,6 +91,7 @@ export const ReservasPage = () => {
           cuartoId: data.cuartoId,
           fechaEntrada: data.fechaEntrada,
           fechaSalida: data.fechaSalida,
+          numeroPersonas: data.numeroPersonas,
           precioTotal: data.precioTotal,
           notas: data.notas,
         },
@@ -98,11 +104,12 @@ export const ReservasPage = () => {
         setEditingReserva(null);
         setRefreshTrigger(prev => prev + 1);
       } else {
-        setError(response.mensaje || "Error al actualizar la reserva");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al actualizar la reserva");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al actualizar reserva:", err);
     }
   };
@@ -129,11 +136,12 @@ export const ReservasPage = () => {
         setEditingReserva(editData);
         setIsModalOpen(true);
       } else {
-        setError(response.mensaje || "Error al cargar la reserva");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al cargar la reserva");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al cargar reserva:", err);
     }
   };
@@ -153,11 +161,12 @@ export const ReservasPage = () => {
         console.log("Reserva eliminada exitosamente");
         setRefreshTrigger(prev => prev + 1);
       } else {
-        setError(response.mensaje || "Error al eliminar la reserva");
+        const friendlyError = processErrorMessage(response.mensaje || "Error al eliminar la reserva");
+        setError(friendlyError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-      setError(errorMessage);
+      const friendlyError = processErrorMessage(err);
+      setError(friendlyError);
       console.error("Error al eliminar reserva:", err);
     }
   };
@@ -168,7 +177,7 @@ export const ReservasPage = () => {
       <div className="reservas-layout">
         {/* Left Side - Banner */}
         <div className="reservas-banner">
-          <img src="/src/assets/images/imagenReservas.jpg" alt="Reservas Banner" className="banner-image" />
+          <img src={reservasImage} alt="Reservas Banner" className="banner-image" />
         </div>
 
         {/* Right Side - Table Content */}

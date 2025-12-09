@@ -137,28 +137,85 @@
 
 /* Badge Styles */
 .reserva-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
   font-size: 0.75rem;
   white-space: nowrap;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  gap: 0.4rem;
+  min-width: 100px;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.reserva-badge::before {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .reserva-badge-confirmada {
-  background-color: #10B981;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   color: #FFFFFF;
+  border: 1px solid #059669;
+}
+
+.reserva-badge-confirmada::before {
+  background-color: #FFFFFF;
+}
+
+.reserva-badge-confirmada:hover {
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
 }
 
 .reserva-badge-pendiente {
-  background-color: #F59E0B;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: #FFFFFF;
+  border: 1px solid #D97706;
+}
+
+.reserva-badge-pendiente::before {
+  background-color: #FFFFFF;
+}
+
+.reserva-badge-pendiente:hover {
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+  transform: translateY(-1px);
 }
 
 .reserva-badge-cancelada {
-  background-color: #EF4444;
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: #FFFFFF;
+  border: 1px solid #DC2626;
+}
+
+.reserva-badge-cancelada::before {
+  background-color: #FFFFFF;
+}
+
+.reserva-badge-cancelada:hover {
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Action Button */
@@ -338,8 +395,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -379,8 +435,7 @@
   .reserva-filter-buttons {
     width: 100%;
     justify-content: flex-start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap;
   }
 
   .reserva-filter-btn {
@@ -390,8 +445,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -433,8 +487,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -461,7 +514,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: visible;
+    overflow: visible;
   }
 
   .reserva-pagination {

@@ -54,6 +54,7 @@ interface HuespedesTableProps {
 }
 
 export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTableProps) => {
+  const ITEMS_PER_PAGE = 7;
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
   const [huespedes, setHuespedes] = useState<HuespedResponse[]>([]);
@@ -98,6 +99,17 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
 
     return false;
   });
+
+  // Cálculo de paginación
+  const totalPages = Math.ceil(filteredHuespedes.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedHuespedes = filteredHuespedes.slice(startIndex, endIndex);
+
+  // Reset a página 1 cuando cambia el filtro o búsqueda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeFilter]);
 
   const getEstadoFromHuesped = (huesped: HuespedResponse) => {
     if (huesped.numeroReservas >= 5) return "VIP";
@@ -166,7 +178,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
       )}
 
       {/* Table */}
-      <Box className="huesped-table-container" bg="#E8DCC8" borderRadius="md" overflow="hidden">
+      <Box className="huesped-table-container" bg="#E8DCC8" borderRadius="md" overflow="visible">
         <Table variant="unstyled">
           <Thead bg="#E8DCC8">
             <Tr>
@@ -180,7 +192,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
             </Tr>
           </Thead>
           <Tbody>
-            {filteredHuespedes.length === 0 ? (
+            {paginatedHuespedes.length === 0 ? (
               <Tr>
                 <Td colSpan={7} className="huesped-empty-state">
                   <div className="huesped-empty-state-content">
@@ -189,7 +201,7 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
                 </Td>
               </Tr>
             ) : (
-              filteredHuespedes.map((huesped) => {
+              paginatedHuespedes.map((huesped) => {
                 const estado = getEstadoFromHuesped(huesped);
                 const config = getEstadoConfig(estado);
                 return (
@@ -225,32 +237,30 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
       {/* Pagination and Info Footer */}
       <div className="huesped-pagination">
         <p className="huesped-info-text">
-          Mostrando 1 a {filteredHuespedes.length} de {huespedes.length} huéspedes
+          Mostrando {filteredHuespedes.length === 0 ? 0 : startIndex + 1} a {Math.min(endIndex, filteredHuespedes.length)} de {filteredHuespedes.length} huéspedes
         </p>
         <div className="huesped-pagination-buttons">
           <button
             className="huesped-pagination-btn"
-            disabled
+            disabled={currentPage === 1 || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           >
             ←
           </button>
-          {[1, 2, 3].map((page) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               className={`huesped-pagination-btn ${currentPage === page ? "active" : ""}`}
               onClick={() => setCurrentPage(page)}
+              disabled={totalPages <= 1}
             >
               {page}
             </button>
           ))}
-          <span className="huesped-pagination-ellipsis">...</span>
           <button
             className="huesped-pagination-btn"
-          >
-            12
-          </button>
-          <button
-            className="huesped-pagination-btn"
+            disabled={currentPage === totalPages || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           >
             →
           </button>
