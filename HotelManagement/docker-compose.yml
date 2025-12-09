@@ -1,0 +1,68 @@
+services:
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: hotel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_2024
+      MYSQL_DATABASE: hoteldb
+      MYSQL_USER: hoteluser
+      MYSQL_PASSWORD: hotel_password_2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password_2024"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # phpMyAdmin para gestión de la base de datos
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: hotel-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: hoteluser
+      PMA_PASSWORD: hotel_password_2024
+      MYSQL_ROOT_PASSWORD: root_password_2024
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  # Backend API
+  api:
+    build:
+      context: .
+      dockerfile: HotelManagement.Server/Dockerfile
+    container_name: hotel-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5069
+      - ConnectionStrings__HotelDB=server=mysql;port=3306;database=hoteldb;user=hoteluser;password=hotel_password_2024
+      - Jwt__Key=super-secret-key-for-jwt-token-minimum-32-characters-long
+      - Jwt__Issuer=HotelManagementAPI
+      - Jwt__Audience=HotelManagementClient
+    ports:
+      - "5069:5069"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  hotel-network:
+    driver: bridge

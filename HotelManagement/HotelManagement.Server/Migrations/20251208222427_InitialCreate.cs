@@ -26,11 +26,11 @@ namespace HotelManagement.Server.Migrations
                     Numero = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Tipo = table.Column<int>(type: "int", nullable: false),
-                    CapacidadPersonas = table.Column<int>(type: "int", nullable: false),
-                    PrecioPorNoche = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Estado = table.Column<int>(type: "int", nullable: false),
                     Descripcion = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PrecioPorNoche = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CapacidadPersonas = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,11 +95,11 @@ namespace HotelManagement.Server.Migrations
                     FechaEntrada = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     FechaSalida = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     NumeroPersonas = table.Column<int>(type: "int", nullable: false),
-                    Estado = table.Column<int>(type: "int", nullable: false),
                     MontoTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Estado = table.Column<int>(type: "int", nullable: false),
                     Observaciones = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,20 +124,20 @@ namespace HotelManagement.Server.Migrations
                 columns: new[] { "Id", "CapacidadPersonas", "Descripcion", "Estado", "Numero", "PrecioPorNoche", "Tipo" },
                 values: new object[,]
                 {
-                    { 1, 1, "Habitación individual con vista a la ciudad", 1, "101", 50.00m, 1 },
-                    { 2, 2, "Habitación doble con cama queen size", 1, "102", 80.00m, 2 },
-                    { 3, 3, "Suite con sala de estar y jacuzzi", 1, "201", 150.00m, 3 },
-                    { 4, 4, "Habitación familiar con dos camas dobles", 1, "202", 120.00m, 4 },
-                    { 5, 4, "Suite presidencial con todas las comodidades", 1, "301", 300.00m, 5 }
+                    { 1, 1, "Habitación individual con vista a la ciudad", 0, "101", 50.00m, 0 },
+                    { 2, 2, "Habitación doble con balcón", 0, "102", 75.00m, 1 },
+                    { 3, 4, "Suite de lujo con jacuzzi", 0, "201", 150.00m, 2 },
+                    { 4, 6, "Habitación familiar amplia", 0, "202", 120.00m, 3 },
+                    { 5, 2, "Habitación doble estándar", 0, "301", 80.00m, 1 }
                 });
 
             migrationBuilder.InsertData(
-                table: "Huespedes",
-                columns: new[] { "Id", "Apellido", "Direccion", "DocumentoIdentidad", "Email", "FechaRegistro", "Nombre", "Telefono" },
+                table: "Usuarios",
+                columns: new[] { "Id", "FechaCreacion", "NombreUsuario", "PasswordHash", "Rol" },
                 values: new object[,]
                 {
-                    { 1, "Pérez", "Calle Mayor 1, Madrid", "12345678A", "juan.perez@email.com", new DateTime(2025, 9, 8, 18, 41, 37, 543, DateTimeKind.Local).AddTicks(1118), "Juan", "+34-600-123-456" },
-                    { 2, "García", "Avenida Principal 45, Barcelona", "87654321B", "maria.garcia@email.com", new DateTime(2025, 10, 8, 18, 41, 37, 543, DateTimeKind.Local).AddTicks(1131), "María", "+34-600-789-012" }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin", "$2a$11$ZqBBKLPRkKWPKKb9VIjwuuQXw4QmuWEezea2ii17Dgd5xcum.YjGG", "Admin" },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "usuario", "$2a$11$UDvpK6D8kalEmHUVI1kxduAC9pXBvwk.J7g5k01MdIQEYh2z6/93G", "Usuario" }
                 });
 
             migrationBuilder.CreateIndex(
