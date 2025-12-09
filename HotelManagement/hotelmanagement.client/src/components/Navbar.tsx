@@ -60,9 +60,14 @@ export const Navbar = () => {
             </button>
           )}
           {location.pathname === "/reservas" && (
-            <button className="btn-add-cliente" onClick={handleAddReserva}>
-              + Añadir Nueva Reserva
-            </button>
+            <>
+              <button className="btn-add-cliente" onClick={handleAddReserva}>
+                + Añadir Nueva Reserva
+              </button>
+              <button className="btn-secondary" onClick={() => navigate('/habitaciones')}>
+                Habitaciones
+              </button>
+            </>
           )}
           <button className="action-btn" title="Notificaciones">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -161,6 +161,31 @@
   transform: scale(0.98);
 }
 
+/* Secondary Button (Habitaciones) */
+.btn-secondary {
+  padding: 0.625rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid #8B6F47;
+  background-color: transparent;
+  color: #8B6F47;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-secondary:hover {
+  background-color: #8B6F47;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .navbar-nav {
@@ -172,6 +197,11 @@
   }
   
   .btn-add-cliente {
+    padding: 0.625rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-secondary {
     padding: 0.625rem 1rem;
     font-size: 0.85rem;
   }
