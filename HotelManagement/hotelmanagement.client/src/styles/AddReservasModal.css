@@ -1,0 +1,147 @@
+/* AddReservasModal Styles - Chakra UI Overrides */
+
+/* Override Chakra Modal for brown-beige palette */
+.chakra-modal__content {
+  background-color: #FBF8F3 !important;
+  border: 1px solid #E8DCC8 !important;
+}
+
+.chakra-modal__header {
+  background: linear-gradient(135deg, #F5EDE3 0%, #FBF8F3 100%) !important;
+  border-bottom: 2px solid #E8DCC8 !important;
+  padding: 1.5rem !important;
+}
+
+.chakra-modal__header h2,
+.chakra-modal__header > * {
+  color: #6F4E37 !important;
+  font-weight: 600;
+}
+
+.chakra-modal__close-btn {
+  color: #8B6F47 !important;
+}
+
+.chakra-modal__close-btn:hover {
+  background-color: #E8DCC8 !important;
+  color: #6F4E37 !important;
+}
+
+.chakra-modal__body {
+  padding: 1.5rem !important;
+  color: #6F4E37;
+}
+
+/* Form Controls */
+.chakra-form__label {
+  color: #6F4E37 !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Text Inputs */
+.chakra-input {
+  background-color: #FDFBF8 !important;
+  border: 2px solid #D7CCC8 !important;
+  color: #6F4E37 !important;
+}
+
+.chakra-input:focus {
+  border-color: #8B6F47 !important;
+  box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1) !important;
+}
+
+.chakra-input::placeholder {
+  color: #9E9E9E;
+}
+
+/* Select Inputs */
+.chakra-select {
+  background-color: #FDFBF8 !important;
+  border: 2px solid #D7CCC8 !important;
+  color: #6F4E37 !important;
+}
+
+.chakra-select:focus {
+  border-color: #8B6F47 !important;
+  box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1) !important;
+}
+
+/* Textarea */
+.chakra-textarea {
+  background-color: #FDFBF8 !important;
+  border: 2px solid #D7CCC8 !important;
+  color: #6F4E37 !important;
+}
+
+.chakra-textarea:focus {
+  border-color: #8B6F47 !important;
+  box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1) !important;
+}
+
+.chakra-textarea::placeholder {
+  color: #9E9E9E;
+}
+
+/* Modal Footer */
+.chakra-modal__footer {
+  border-top: 2px solid #E8DCC8 !important;
+  background-color: #F5EDE3 !important;
+  padding: 1.5rem !important;
+  gap: 1rem;
+}
+
+/* Buttons */
+.chakra-button {
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+/* Cancel Button */
+.btn-cancel,
+[type="button"][aria-label*="Cancel"],
+button:not([type="submit"]) {
+  background-color: #E8DCC8 !important;
+  color: #6F4E37 !important;
+  border: 2px solid #D7CCC8 !important;
+}
+
+button:not([type="submit"]):hover {
+  background-color: #D4C4B0 !important;
+  border-color: #8B6F47 !important;
+  color: #4B2F20 !important;
+}
+
+/* Submit Button */
+.btn-submit,
+[type="submit"],
+button[type="submit"] {
+  background-color: #6F4E37 !important;
+  color: #FDFBF8 !important;
+  border: 2px solid #6F4E37 !important;
+}
+
+button[type="submit"]:hover {
+  background-color: #8B6F47 !important;
+  border-color: #8B6F47 !important;
+  color: #FDFBF8 !important;
+}
+
+button[type="submit"]:active {
+  opacity: 0.9;
+}
+
+/* Error message color */
+.chakra-form__error-message {
+  color: #EF4444 !important;
+  font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .chakra-modal__content {
+    width: 95% !important;
+    max-height: 95vh !important;
+  }
+}

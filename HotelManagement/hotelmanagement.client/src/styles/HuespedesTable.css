@@ -4,6 +4,7 @@
 :root {
   --color-primary-dark: #000000;
   --color-primary-light: #2F4F4F;
+  --color-header-brown: #4B2F20;
   --color-border-warm: #D7CCC8;
   --color-bg-light: #FAFAFA;
   --color-bg-white: #ffffff;
@@ -149,7 +150,7 @@
 
 .huesped-table-header-cell {
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--color-header-brown);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;

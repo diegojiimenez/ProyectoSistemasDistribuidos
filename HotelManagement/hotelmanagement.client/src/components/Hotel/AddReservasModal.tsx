@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "../../hooks/useAuth";
 import { huespedesService } from "../../services/huespedesService";
+import "../../styles/AddReservasModal.css";
 
 export interface ReservasFormData {
   huespedId: number;
@@ -143,8 +144,11 @@ export const AddReservasModal = ({
     <Modal isOpen={isOpen} onClose={handleClose} isCentered>
       <ModalOverlay />
       <ModalContent maxW="500px">
-        <ModalHeader>{initialData?.huespedId ? "Editar Reserva" : "Nueva Reserva"}</ModalHeader>
+        <ModalHeader>{initialData?.huespedId ? "Editar Reserva" : "Crear Reserva"}</ModalHeader>
         <ModalCloseButton />
+        <Text className="modal-subtitle">
+          Rellene los siguientes campos para añadir una nueva reserva.
+        </Text>
         <form onSubmit={handleSubmit}>
           <ModalBody>
             <VStack spacing={4}>

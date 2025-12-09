@@ -170,12 +170,12 @@ export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTa
         <Table variant="unstyled">
           <Thead bg="#E8DCC8">
             <Tr>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Nombre Completo</Th>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Email</Th>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Teléfono</Th>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">DNI</Th>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Fecha Registro</Th>
-              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Estado</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Nombre Completo</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Email</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Teléfono</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">DNI</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Fecha Registro</Th>
+              <Th color="#4B2F20" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Estado</Th>
               <Th></Th>
             </Tr>
           </Thead>
