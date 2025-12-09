@@ -24,7 +24,7 @@
   align-items: center;
   padding: 0.75rem 2rem;
   box-sizing: border-box;
-  gap: 2rem;
+  position: relative;
 }
 
 /* Logo Section */
@@ -49,14 +49,17 @@
   margin: 0;
 }
 
-/* Navigation in center */
+/* Navigation in center - ABSOLUTE CENTERED */
 .navbar-nav {
   display: flex;
   align-items: center;
   gap: 1rem;
   justify-content: center;
-  flex: 1;
-  min-width: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
 /* Navbar Actions */
@@ -65,6 +68,7 @@
   align-items: center;
   gap: 1.5rem;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* Navigation Link Button */
