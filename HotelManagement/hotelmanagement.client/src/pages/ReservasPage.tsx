@@ -11,6 +11,7 @@ type ReservasFormData = {
   cuartoId: number;
   fechaEntrada: string;
   fechaSalida: string;
+  numeroPersonas: number;
   precioTotal: number;
   notas?: string;
 };
@@ -51,6 +52,7 @@ export const ReservasPage = () => {
           cuartoId: data.cuartoId,
           fechaEntrada: data.fechaEntrada,
           fechaSalida: data.fechaSalida,
+          numeroPersonas: data.numeroPersonas,
           precioTotal: data.precioTotal,
           notas: data.notas,
         },
@@ -87,6 +89,7 @@ export const ReservasPage = () => {
           cuartoId: data.cuartoId,
           fechaEntrada: data.fechaEntrada,
           fechaSalida: data.fechaSalida,
+          numeroPersonas: data.numeroPersonas,
           precioTotal: data.precioTotal,
           notas: data.notas,
         },

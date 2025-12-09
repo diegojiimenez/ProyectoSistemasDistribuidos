@@ -5,6 +5,7 @@ export interface ReservaCreateRequest {
   cuartoId: number;
   fechaEntrada: string;
   fechaSalida: string;
+  numeroPersonas: number;
   precioTotal: number;
   notas?: string;
 }
@@ -57,8 +58,9 @@ export const reservasService = {
       cuartoId: reserva.cuartoId,
       fechaEntrada: reserva.fechaEntrada,
       fechaSalida: reserva.fechaSalida,
+      numeroPersonas: reserva.numeroPersonas,
       precioTotal: reserva.precioTotal,
-      notas: reserva.notas || "",
+      observaciones: reserva.notas || "",
     };
 
     return apiClient.post<ApiResponse<ReservaResponse>>("/reservas", dtoBody, token);
@@ -77,8 +79,9 @@ export const reservasService = {
       cuartoId: reserva.cuartoId,
       fechaEntrada: reserva.fechaEntrada,
       fechaSalida: reserva.fechaSalida,
+      numeroPersonas: reserva.numeroPersonas,
       precioTotal: reserva.precioTotal,
-      notas: reserva.notas || "",
+      observaciones: reserva.notas || "",
     };
 
     return apiClient.put<ApiResponse<ReservaResponse>>(`/reservas/${id}`, dtoBody, token);

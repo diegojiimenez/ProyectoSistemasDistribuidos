@@ -338,8 +338,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -379,8 +378,7 @@
   .reserva-filter-buttons {
     width: 100%;
     justify-content: flex-start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap;
   }
 
   .reserva-filter-btn {
@@ -390,8 +388,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -433,8 +430,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 
   .reserva-pagination {
@@ -461,7 +457,7 @@
   }
 
   .reserva-table-container {
-    overflow-x: visible;
+    overflow: visible;
   }
 
   .reserva-pagination {

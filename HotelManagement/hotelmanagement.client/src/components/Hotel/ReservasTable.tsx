@@ -54,6 +54,7 @@ interface ReservasTableProps {
 }
 
 export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTableProps) => {
+  const ITEMS_PER_PAGE = 7;
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todas");
   const [reservas, setReservas] = useState<ReservaResponse[]>([]);
@@ -98,6 +99,17 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
 
     return false;
   });
+
+  // Cálculo de paginación
+  const totalPages = Math.ceil(filteredReservas.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedReservas = filteredReservas.slice(startIndex, endIndex);
+
+  // Reset a página 1 cuando cambia el filtro o búsqueda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeFilter]);
 
   const getEstadoConfig = (estado: string) => {
     switch (estado) {
@@ -164,21 +176,10 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
         className="reserva-table-container" 
         bg="#E8DCC8" 
         borderRadius="md" 
-        overflow="auto"
-        sx={{
-          '@media (max-width: 768px)': {
-            overflow: 'auto',
-            WebkitOverflowScrolling: 'touch',
-          }
-        }}
+        overflow="visible"
       >
         <Table 
           variant="unstyled"
-          sx={{
-            '@media (max-width: 768px)': {
-              minWidth: '600px',
-            }
-          }}
         >
           <Thead bg="#E8DCC8">
             <Tr>
@@ -269,7 +270,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
             </Tr>
           </Thead>
           <Tbody>
-            {filteredReservas.length === 0 ? (
+            {paginatedReservas.length === 0 ? (
               <Tr>
                 <Td colSpan={7} className="reserva-empty-state">
                   <div className="reserva-empty-state-content">
@@ -278,7 +279,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
                 </Td>
               </Tr>
             ) : (
-              filteredReservas.map((reserva) => {
+              paginatedReservas.map((reserva) => {
                 const config = getEstadoConfig(reserva.estado);
                 return (
                   <Tr 
@@ -362,32 +363,30 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
       {/* Pagination and Info Footer */}
       <div className="reserva-pagination">
         <p className="reserva-info-text">
-          Mostrando 1 a {filteredReservas.length} de {reservas.length} reservas
+          Mostrando {filteredReservas.length === 0 ? 0 : startIndex + 1} a {Math.min(endIndex, filteredReservas.length)} de {filteredReservas.length} reservas
         </p>
         <div className="reserva-pagination-buttons">
           <button
             className="reserva-pagination-btn"
-            disabled
+            disabled={currentPage === 1 || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           >
             ←
           </button>
-          {[1, 2, 3].map((page) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               className={`reserva-pagination-btn ${currentPage === page ? "active" : ""}`}
               onClick={() => setCurrentPage(page)}
+              disabled={totalPages <= 1}
             >
               {page}
             </button>
           ))}
-          <span className="reserva-pagination-ellipsis">...</span>
           <button
             className="reserva-pagination-btn"
-          >
-            12
-          </button>
-          <button
-            className="reserva-pagination-btn"
+            disabled={currentPage === totalPages || totalPages <= 1}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           >
             →
           </button>
