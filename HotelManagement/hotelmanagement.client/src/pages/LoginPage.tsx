@@ -22,15 +22,20 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🔵 [LoginPage] handleSubmit called");
+    console.log("🔵 [LoginPage] nombreUsuario:", nombreUsuario, "password:", password);
     setError("");
     setIsLoading(true);
 
     try {
       // Usar el método login del AuthContext
+      console.log("🔵 [LoginPage] Calling login()...");
       await login(nombreUsuario, password);
+      console.log("🟢 [LoginPage] Login successful");
     } catch (err) {
-      setError("Usuario o contraseña incorrectos");
-      console.error("Error al iniciar sesión:", err);
+      const errorMessage = err instanceof Error ? err.message : "Usuario o contraseña incorrectos";
+      setError(errorMessage);
+      console.error("🔴 [LoginPage] Error al iniciar sesión:", err);
       setIsLoading(false);
     }
   };

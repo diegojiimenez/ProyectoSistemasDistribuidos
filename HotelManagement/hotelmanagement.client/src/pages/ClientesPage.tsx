@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
-import { Sidebar } from "../components/Sidebar";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
 import { huespedesService } from "../services/huespedesService";
@@ -15,8 +14,19 @@ export const ClientesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingHuesped, setEditingHuesped] = useState<HuespedEdit | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { token } = useAuth();
   const tableRefresh = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const handleOpenModal = () => {
+      setIsModalOpen(true);
+      setEditingHuesped(null);
+    };
+
+    window.addEventListener("openClienteModal", handleOpenModal);
+    return () => window.removeEventListener("openClienteModal", handleOpenModal);
+  }, []);
 
   const handleAddHuesped = async (data: HuespedesFormData) => {
     if (!token) {
@@ -42,10 +52,7 @@ export const ClientesPage = () => {
       if (response.exito) {
         console.log("Huésped creado exitosamente:", response.datos);
         setIsModalOpen(false);
-        // Refrescar la tabla
-        if (tableRefresh.current) {
-          tableRefresh.current();
-        }
+        setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
         setError(response.mensaje || "Error al crear el huésped");
       }
@@ -82,10 +89,7 @@ export const ClientesPage = () => {
         console.log("Huésped actualizado exitosamente:", response.datos);
         setIsModalOpen(false);
         setEditingHuesped(null);
-        // Refrescar la tabla
-        if (tableRefresh.current) {
-          tableRefresh.current();
-        }
+        setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
         setError(response.mensaje || "Error al actualizar el huésped");
       }
@@ -102,14 +106,11 @@ export const ClientesPage = () => {
       return;
     }
 
-    setError(null);
-
     try {
       const response = await huespedesService.getHuespedById(huespedId, token);
-
       if (response.exito && response.datos) {
         const huesped = response.datos;
-        const editData: HuespedEdit = {
+        setEditingHuesped({
           id: huesped.id,
           nombre: huesped.nombre,
           apellido: huesped.apellido,
@@ -118,17 +119,15 @@ export const ClientesPage = () => {
           documentoIdentidad: huesped.documentoIdentidad,
           direccion: huesped.direccion,
           estado: "Regular",
-        };
-        
-        setEditingHuesped(editData);
+        });
         setIsModalOpen(true);
       } else {
-        setError(response.mensaje || "Error al obtener los datos del huésped");
+        setError(response.mensaje || "Error al cargar el huésped");
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Error desconocido";
       setError(errorMessage);
-      console.error("Error al obtener huésped:", err);
+      console.error("Error al cargar huésped:", err);
     }
   };
 
@@ -145,10 +144,7 @@ export const ClientesPage = () => {
 
       if (response.exito) {
         console.log("Huésped eliminado exitosamente");
-        // Refrescar la tabla
-        if (tableRefresh.current) {
-          tableRefresh.current();
-        }
+        setRefreshTrigger(prev => prev + 1); // Trigger table refresh
       } else {
         setError(response.mensaje || "Error al eliminar el huésped");
       }
@@ -166,34 +162,18 @@ export const ClientesPage = () => {
 
       {/* Main Layout */}
       <div className="clientes-layout">
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Left Side - Banner */}
+        <div className="clientes-banner">
+          <img src="/src/assets/images/imagenClientes.jpg" alt="Clientes Banner" className="banner-image" />
+        </div>
 
-        {/* Main Content */}
+        {/* Right Side - Table Content */}
         <div className="clientes-content">
-          {/* Header con Título y Botones */}
-          <div className="clientes-header">
-            <div className="clientes-title-section">
-              <h1 className="clientes-title">Listado de Huéspedes</h1>
-              <p className="clientes-subtitle">Gestiona toda la información de los huéspedes registrados.</p>
-            </div>
-            <div className="clientes-actions">
-              <button className="btn-export">
-                Exportar
-              </button>
-              <button className="btn-add-huesped" onClick={() => setIsModalOpen(true)}>
-                Añadir Huésped
-              </button>
-            </div>
-          </div>
-
           {/* Tabla de Huéspedes */}
           <HuespedesTable 
             onEdit={handleOpenEditModal}
             onDelete={handleDeleteHuesped}
-            onRefreshRef={(refresh) => {
-              tableRefresh.current = refresh;
-            }}
+            refreshTrigger={refreshTrigger}
           />
         </div>
       </div>

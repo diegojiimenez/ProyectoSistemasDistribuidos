@@ -40,14 +40,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const login = async (nombreUsuario: string, password: string) => {
-    const response = await authService.login({ nombreUsuario, password });
-    authService.saveToken(response.token);
-    setToken(response.token);
-    setUser({
-      nombreUsuario: response.nombreUsuario,
-      rol: response.rol,
-    });
-    setIsLoading(false);
+    try {
+      const response = await authService.login({ nombreUsuario, password });
+      authService.saveToken(response.token);
+      setToken(response.token);
+      setUser({
+        nombreUsuario: response.nombreUsuario,
+        rol: response.rol,
+      });
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
   };
 
   const logout = () => {

@@ -19,20 +19,22 @@ export interface RegistroRequest {
 
 export const authService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await apiClient.post<LoginResponse>("/auth/login", {
-      nombreUsuario: data.nombreUsuario,
-      password: data.password,
-    });
-    return response;
+    console.log("🔵 authService.login called with:", data);
+    const url = "/auth/login";
+    console.log("🔵 Fetching from:", url);
+    try {
+      const response = await apiClient.post<LoginResponse>(url, data);
+      console.log("🟢 Login response:", response);
+      return response;
+    } catch (error) {
+      console.error("🔴 Login error in authService:", error);
+      throw error;
+    }
   },
 
   async registro(data: RegistroRequest): Promise<{ message: string }> {
-    const response = await apiClient.post<{ message: string }>("/auth/registro", {
-      nombreUsuario: data.nombreUsuario,
-      password: data.password,
-      rol: data.rol || "Usuario",
-    });
-    return response;
+    console.log("🔵 authService.registro called with:", data);
+    return apiClient.post<{ message: string }>("/auth/registro", data);
   },
 
   saveToken(token: string): void {

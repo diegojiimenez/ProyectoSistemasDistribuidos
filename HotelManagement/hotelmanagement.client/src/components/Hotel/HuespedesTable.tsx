@@ -5,15 +5,13 @@ import {
   Tr,
   Th,
   Td,
-  Button,
   VStack,
   Box,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { HuespedesActionMenu } from "./HuespedesActionMenu";
-import { huespedesService } from "../../services/huespedesService";
+import { huespedesService, type HuespedResponse } from "../../services/huespedesService";
 import { useAuth } from "../../hooks/useAuth";
-import { formatearFecha } from "../../utils/dateUtils";
 import "../../styles/HuespedesTable.css";
 
 // Search Icon Component
@@ -36,34 +34,6 @@ const SearchIcon = () => (
   </svg>
 );
 
-// Paleta de colores con personalidad rústica
-interface Huesped {
-  id: number;
-  nombre: string;
-  apellido: string;
-  email: string;
-  telefono: string;
-  documentoIdentidad: string;
-  fechaRegistro: string;
-  estado: "VIP" | "Frecuente" | "Regular" | "Bloqueado";
-}
-
-// Paleta de colores con personalidad rústica
-const getEstadoConfig = (estado: string) => {
-  switch (estado) {
-    case "VIP":
-      return { className: "huesped-badge-vip", label: "VIP" };
-    case "Frecuente":
-      return { className: "huesped-badge-frecuente", label: "FRECUENTE" };
-    case "Regular":
-      return { className: "huesped-badge-regular", label: "REGULAR" };
-    case "Bloqueado":
-      return { className: "huesped-badge-bloqueado", label: "BLOQUEADO" };
-    default:
-      return { className: "huesped-badge-regular", label: "REGULAR" };
-  }
-};
-
 interface FilterButton {
   label: string;
   key: string;
@@ -79,79 +49,70 @@ const filterOptions: FilterButton[] = [
 interface HuespedesTableProps {
   onEdit: (huespedId: number) => void;
   onDelete: (huespedId: number) => void;
-  onRefreshRef?: (refresh: () => void) => void;
+  refreshTrigger?: number;
 }
 
-export const HuespedesTable = ({ onEdit, onDelete, onRefreshRef }: HuespedesTableProps) => {
+export const HuespedesTable = ({ onEdit, onDelete, refreshTrigger }: HuespedesTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
-  const [huespedes, setHuespedes] = useState<Huesped[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [huespedes, setHuespedes] = useState<HuespedResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const { token } = useAuth();
 
-  // Función para cargar huéspedes
-  const loadHuespedes = async () => {
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const response = await huespedesService.getAllHuespedes(token);
+  // Cargar huéspedes del backend
+  useEffect(() => {
+    const loadHuespedes = async () => {
+      if (!token) return;
       
-      if (response.exito && response.datos) {
-        // Mapear datos del backend a la interfaz local
-        const huespedesMapeados: Huesped[] = response.datos.map((h: any) => ({
-          id: h.id,
-          nombre: h.nombre,
-          apellido: h.apellido,
-          email: h.correoElectronico,
-          telefono: h.telefono,
-          documentoIdentidad: h.documentoIdentidad,
-          fechaRegistro: h.fechaRegistro,
-          estado: "Regular", // Por defecto, luego se puede calcular
-        }));
-        setHuespedes(huespedesMapeados);
-        setError(null);
-      } else {
-        setError(response.mensaje || "Error al cargar huéspedes");
+      try {
+        setLoading(true);
+        const response = await huespedesService.getAllHuespedes(token);
+        if (response.exito && response.datos) {
+          setHuespedes(response.datos);
+        }
+      } catch (error) {
+        console.error("Error loading huéspedes:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cargar huéspedes");
-      console.error("Error loading huespedes:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  // Cargar huéspedes cuando el componente monta o cambia el token
-  useEffect(() => {
     loadHuespedes();
-  }, [token]);
-
-  // Exponer función de recarga al componente padre
-  useEffect(() => {
-    if (onRefreshRef) {
-      onRefreshRef(loadHuespedes);
-    }
-  }, [onRefreshRef, loadHuespedes]);
+  }, [token, refreshTrigger]);
 
   const filteredHuespedes = huespedes.filter((huesped) => {
     const matchesSearch =
       huesped.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       huesped.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      huesped.email.toLowerCase().includes(searchTerm.toLowerCase());
+      huesped.correoElectronico.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (activeFilter === "todos") return matchesSearch;
-    if (activeFilter === "frecuente" && huesped.estado === "Frecuente") return matchesSearch;
-    if (activeFilter === "vip" && huesped.estado === "VIP") return matchesSearch;
-    if (activeFilter === "bloqueado" && huesped.estado === "Bloqueado") return matchesSearch;
+    if (activeFilter === "frecuente" && huesped.numeroReservas >= 3) return matchesSearch;
+    if (activeFilter === "vip" && huesped.numeroReservas >= 5) return matchesSearch;
+    if (activeFilter === "bloqueado") return matchesSearch; // Sin estado bloqueado en los datos reales
 
     return false;
   });
+
+  const getEstadoFromHuesped = (huesped: HuespedResponse) => {
+    if (huesped.numeroReservas >= 5) return "VIP";
+    if (huesped.numeroReservas >= 3) return "Frecuente";
+    return "Regular";
+  };
+
+  const getEstadoConfig = (estado: string) => {
+    switch (estado) {
+      case "VIP":
+        return { label: "VIP", className: "huesped-badge-vip" };
+      case "Frecuente":
+        return { label: "Huésped Frecuente", className: "huesped-badge-frecuente" };
+      case "Bloqueado":
+        return { label: "Bloqueado", className: "huesped-badge-bloqueado" };
+      default:
+        return { label: "Regular", className: "huesped-badge-regular" };
+    }
+  };
 
   return (
     <VStack>
@@ -171,13 +132,13 @@ export const HuespedesTable = ({ onEdit, onDelete, onRefreshRef }: HuespedesTabl
         {/* Filter Buttons - Segmented Control Style */}
         <div className="huesped-filter-buttons">
           {filterOptions.map((filter) => (
-            <Button
+            <button
               key={filter.key}
               onClick={() => setActiveFilter(filter.key)}
               className={`huesped-filter-btn ${activeFilter === filter.key ? "active" : ""}`}
             >
               {filter.label}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
@@ -201,99 +162,94 @@ export const HuespedesTable = ({ onEdit, onDelete, onRefreshRef }: HuespedesTabl
       )}
 
       {/* Table */}
-      {!isLoading && !error && (
-        <Box className="huesped-table-container">
-          <Table>
-            <Thead className="huesped-table-head">
-              <Tr className="huesped-table-header">
-                <Th className="huesped-table-header-cell">Nombre Completo</Th>
-                <Th className="huesped-table-header-cell">Email</Th>
-                <Th className="huesped-table-header-cell">Teléfono</Th>
-                <Th className="huesped-table-header-cell">DNI</Th>
-                <Th className="huesped-table-header-cell">Fecha Registro</Th>
-                <Th className="huesped-table-header-cell">Estado</Th>
-                <Th></Th>
+      <Box className="huesped-table-container" bg="#E8DCC8" borderRadius="md" overflow="hidden">
+        <Table variant="unstyled">
+          <Thead bg="#E8DCC8">
+            <Tr>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Nombre Completo</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Email</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Teléfono</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">DNI</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Fecha Registro</Th>
+              <Th color="#1F2937" fontSize="0.85rem" fontWeight="600" textTransform="uppercase" letterSpacing="0.5px" py={4} px={5} borderBottom="2px solid #D7CCC8">Estado</Th>
+              <Th></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {filteredHuespedes.length === 0 ? (
+              <Tr>
+                <Td colSpan={7} className="huesped-empty-state">
+                  <div className="huesped-empty-state-content">
+                    <p className="huesped-empty-state-text">Sin datos</p>
+                  </div>
+                </Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {filteredHuespedes.length === 0 ? (
-                <Tr>
-                  <Td colSpan={7} className="huesped-empty-state">
-                    <div className="huesped-empty-state-content">
-                      <p className="huesped-empty-state-text">Sin datos</p>
-                    </div>
-                  </Td>
-                </Tr>
-              ) : (
-                filteredHuespedes.map((huesped) => {
-                  const config = getEstadoConfig(huesped.estado);
-                  return (
-                    <Tr key={huesped.id} className="huesped-table-row">
-                      <Td className="huesped-table-cell huesped-table-cell-name">
-                        {huesped.nombre} {huesped.apellido}
-                      </Td>
-                      <Td className="huesped-table-cell">{huesped.email}</Td>
-                      <Td className="huesped-table-cell">{huesped.telefono}</Td>
-                      <Td className="huesped-table-cell">{huesped.documentoIdentidad}</Td>
-                      <Td className="huesped-table-cell">{formatearFecha(huesped.fechaRegistro)}</Td>
-                      <Td>
-                        <span className={`huesped-badge ${config.className}`}>
-                          {config.label}
-                        </span>
-                      </Td>
-                      <Td className="huesped-table-cell-actions">
-                        <HuespedesActionMenu
-                          huespedId={huesped.id}
-                          huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
-                          onEdit={onEdit}
-                          onDelete={onDelete}
-                        />
-                      </Td>
-                    </Tr>
-                  );
-                })
-              )}
-            </Tbody>
-          </Table>
-        </Box>
-      )}
+            ) : (
+              filteredHuespedes.map((huesped) => {
+                const estado = getEstadoFromHuesped(huesped);
+                const config = getEstadoConfig(estado);
+                return (
+                  <Tr key={huesped.id} bg="#FAFAFA" borderBottom="1px solid #D7CCC8" _hover={{ bg: "#F5F5F5" }}>
+                    <Td color="#6F4E37" fontSize="0.95rem" fontWeight="500" py={4} px={5}>
+                      {huesped.nombre} {huesped.apellido}
+                    </Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.correoElectronico}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.telefono}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.documentoIdentidad}</Td>
+                    <Td color="#6F4E37" fontSize="0.95rem" py={4} px={5}>{huesped.fechaRegistro}</Td>
+                    <Td py={4} px={5}>
+                      <span className={`huesped-badge ${config.className}`}>
+                        {config.label}
+                      </span>
+                    </Td>
+                    <Td py={4} px={5}>
+                      <HuespedesActionMenu
+                        huespedId={huesped.id}
+                        huespedNombre={`${huesped.nombre} ${huesped.apellido}`}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                      />
+                    </Td>
+                  </Tr>
+                );
+              })
+            )}
+          </Tbody>
+        </Table>
+      </Box>
 
       {/* Pagination and Info Footer */}
       <div className="huesped-pagination">
         <p className="huesped-info-text">
-          Mostrando 1 a {filteredHuespedes.length} de 123 huéspedes
+          Mostrando 1 a {filteredHuespedes.length} de {huespedes.length} huéspedes
         </p>
         <div className="huesped-pagination-buttons">
-          <Button
+          <button
             className="huesped-pagination-btn"
             disabled
-            as="button"
           >
             ←
-          </Button>
+          </button>
           {[1, 2, 3].map((page) => (
-            <Button
+            <button
               key={page}
               className={`huesped-pagination-btn ${currentPage === page ? "active" : ""}`}
               onClick={() => setCurrentPage(page)}
-              as="button"
             >
               {page}
-            </Button>
+            </button>
           ))}
           <span className="huesped-pagination-ellipsis">...</span>
-          <Button
+          <button
             className="huesped-pagination-btn"
-            as="button"
           >
             12
-          </Button>
-          <Button
+          </button>
+          <button
             className="huesped-pagination-btn"
-            as="button"
           >
             →
-          </Button>
+          </button>
         </div>
       </div>
     </VStack>
