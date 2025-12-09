@@ -35,17 +35,7 @@ const SearchIcon = () => (
   </svg>
 );
 
-interface FilterButton {
-  label: string;
-  key: string;
-}
 
-const filterOptions: FilterButton[] = [
-  { label: "Todas", key: "todas" },
-  { label: "Confirmada", key: "confirmada" },
-  { label: "Pendiente", key: "pendiente" },
-  { label: "Cancelada", key: "cancelada" },
-];
 
 interface ReservasTableProps {
   onEdit: (reservaId: number) => void;
@@ -56,7 +46,6 @@ interface ReservasTableProps {
 export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTableProps) => {
   const ITEMS_PER_PAGE = 7;
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("todas");
   const [reservas, setReservas] = useState<ReservaResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -87,17 +76,11 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
   }, [token, refreshTrigger]);
 
   const filteredReservas = reservas.filter((reserva) => {
-    const matchesSearch =
+    return (
       reserva.huespedNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reserva.numeroCuarto.toString().includes(searchTerm) ||
-      reserva.estado.toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (activeFilter === "todas") return matchesSearch;
-    if (activeFilter === "confirmada" && reserva.estado === "Confirmada") return matchesSearch;
-    if (activeFilter === "pendiente" && reserva.estado === "Pendiente") return matchesSearch;
-    if (activeFilter === "cancelada" && reserva.estado === "Cancelada") return matchesSearch;
-
-    return false;
+      reserva.estado.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   // Cálculo de paginación
@@ -106,10 +89,10 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedReservas = filteredReservas.slice(startIndex, endIndex);
 
-  // Reset a página 1 cuando cambia el filtro o búsqueda
+  // Reset a página 1 cuando cambia la búsqueda
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, activeFilter]);
+  }, [searchTerm]);
 
   return (
     <VStack>
@@ -126,18 +109,7 @@ export const ReservasTable = ({ onEdit, onDelete, refreshTrigger }: ReservasTabl
           />
         </div>
 
-        {/* Filter Buttons - Segmented Control Style */}
-        <div className="reserva-filter-buttons">
-          {filterOptions.map((filter) => (
-            <button
-              key={filter.key}
-              onClick={() => setActiveFilter(filter.key)}
-              className={`reserva-filter-btn ${activeFilter === filter.key ? "active" : ""}`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+
       </div>
 
       {/* Loading State */}
