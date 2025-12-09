@@ -20,6 +20,26 @@
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #EFE9E0;
+  scrollbar-gutter: stable;
+}
+
+/* Estilo del scrollbar */
+.dashboard-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboard-content::-webkit-scrollbar-track {
+  background: #EFE9E0;
+}
+
+.dashboard-content::-webkit-scrollbar-thumb {
+  background: #D4C4B0;
+  border-radius: 4px;
+}
+
+.dashboard-content::-webkit-scrollbar-thumb:hover {
+  background: #C0B0A0;
 }
 
 /* Welcome Banner */
