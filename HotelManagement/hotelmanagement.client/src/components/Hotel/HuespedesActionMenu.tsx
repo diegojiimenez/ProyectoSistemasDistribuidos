@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "../../styles/HuespedesActionMenu.css";
 
 interface HuespedesActionMenuProps {
@@ -15,6 +15,18 @@ export const HuespedesActionMenu = ({
   onDelete,
 }: HuespedesActionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.top - 100, // Encima del botón
+        left: rect.left - 60, // Ajustado para centrar el menú
+      });
+    }
+  }, [isOpen]);
 
   const handleEdit = () => {
     onEdit(huespedId);
@@ -31,6 +43,7 @@ export const HuespedesActionMenu = ({
   return (
     <div className="action-menu-container">
       <button
+        ref={buttonRef}
         className="action-menu-btn"
         onClick={() => setIsOpen(!isOpen)}
         title="Más opciones"
@@ -38,8 +51,14 @@ export const HuespedesActionMenu = ({
         ⋯
       </button>
 
-      {isOpen && (
-        <div className="action-menu-dropdown">
+      {isOpen && position && (
+        <div
+          className="action-menu-dropdown"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+          }}
+        >
           <button className="action-menu-item action-menu-edit" onClick={handleEdit}>
             Editar
           </button>
