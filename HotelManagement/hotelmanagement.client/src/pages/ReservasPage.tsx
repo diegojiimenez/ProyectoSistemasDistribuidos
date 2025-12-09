@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navbar } from "../components/Navbar";
 import { reservasService } from "../services/reservasService";
 import { useAuth } from "../hooks/useAuth";
 import { ReservasTable } from "../components/Hotel/ReservasTable";
@@ -165,9 +164,6 @@ export const ReservasPage = () => {
 
   return (
     <div className="reservas-container">
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Layout */}
       <div className="reservas-layout">
         {/* Left Side - Banner */}

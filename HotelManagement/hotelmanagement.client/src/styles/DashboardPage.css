@@ -4,6 +4,8 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #EFE9E0;
+  width: 100%;
+  padding-top: 70px;
 }
 
 /* Dashboard Layout */

@@ -3,7 +3,7 @@
   background-color: #f5f5f4;
   padding: 0;
   width: 100%;
-  height: 70px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11,6 +11,10 @@
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid #e0e0db;
+  flex-wrap: wrap;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 /* Navbar Content */
@@ -19,9 +23,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0.75rem 2rem;
   box-sizing: border-box;
-  gap: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 /* Logo Section */
@@ -51,10 +56,12 @@
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 3.5rem;
+  gap: 1rem;
   flex: 1;
   justify-content: center;
   order: 2;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 /* Navbar Actions */
@@ -144,6 +151,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   order: 3;
+  flex-shrink: 0;
 }
 
 .btn-add-cliente:hover {
@@ -153,6 +161,41 @@
 
 .btn-add-cliente:active {
   transform: scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+  
+  .nav-link-btn .nav-label {
+    display: none;
+  }
+  
+  .btn-add-cliente {
+    padding: 0.625rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-content {
+    padding: 0.75rem 1rem;
+  }
+  
+  .navbar-logo-section {
+    gap: 8px;
+  }
+  
+  .navbar-logo {
+    height: 40px;
+  }
+  
+  .btn-add-cliente {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* Action Buttons */

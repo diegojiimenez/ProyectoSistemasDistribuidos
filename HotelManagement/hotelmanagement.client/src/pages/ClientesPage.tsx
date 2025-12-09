@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { Navbar } from "../components/Navbar";
 import { HuespedesTable } from "../components/Hotel/HuespedesTable";
 import { AddHuespedesModal, type HuespedesFormData } from "../components/Hotel/AddHuespedesModal";
 import { huespedesService } from "../services/huespedesService";
@@ -157,9 +156,6 @@ export const ClientesPage = () => {
 
   return (
     <div className="clientes-container">
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Layout */}
       <div className="clientes-layout">
         {/* Left Side - Banner */}

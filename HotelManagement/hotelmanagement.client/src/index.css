@@ -10,6 +10,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: auto;
+  background-color: #EFE9E0;
 }
 
 #root {

@@ -2,9 +2,10 @@
 .reservas-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #EFE9E0;
-  overflow: hidden;
+  width: 100%;
+  padding-top: 70px;
 }
 
 /* Reservas Layout */

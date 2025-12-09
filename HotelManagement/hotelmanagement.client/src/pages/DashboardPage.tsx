@@ -1,5 +1,4 @@
 import { useAuth } from "../hooks/useAuth";
-import { Navbar } from "../components/Navbar";
 import { ReservationsChart } from "../components/ReservationsChart";
 import dashboardImage from "../assets/images/imagenDashboard.jpg";
 import "../styles/DashboardPage.css";
@@ -9,9 +8,6 @@ export const DashboardPage = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Layout */}
       <div className="dashboard-layout">
         {/* Main Content */}
