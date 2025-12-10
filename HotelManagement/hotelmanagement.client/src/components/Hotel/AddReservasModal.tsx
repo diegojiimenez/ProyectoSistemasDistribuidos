@@ -21,6 +21,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { huespedesService } from "../../services/huespedesService";
 import type { CuartoResponse } from "../../services/cuartosService";
 import { cuartosService } from "../../services/cuartosService";
+import { reservasService, type ReservaResponse } from "../../services/reservasService";
 import { DatePicker } from "../DatePicker";
 import "../../styles/AddReservasModal.css";
 
@@ -52,6 +53,7 @@ export const AddReservasModal = ({
   const [error, setError] = useState<string | null>(null);
   const [huespedes, setHuespedes] = useState<Array<{ id: number; nombre: string; apellido: string }>>([]);
   const [cuartos, setCuartos] = useState<CuartoResponse[]>([]);
+  const [reservas, setReservas] = useState<ReservaResponse[]>([]);
   const [cuartosPorId, setCuartosPorId] = useState<Record<number, CuartoResponse>>({});
 
   const [formData, setFormData] = useState<ReservasFormData>({
@@ -125,6 +127,12 @@ export const AddReservasModal = ({
         });
         setCuartosPorId(cuartosMap);
       }
+
+      // Cargar reservas para filtrar cuartos disponibles
+      const reservasRes = await reservasService.getAllReservas(token!);
+      if (reservasRes.exito && reservasRes.datos) {
+        setReservas(reservasRes.datos);
+      }
     } catch (err) {
       console.error("Error loading data:", err);
       setError("Error al cargar datos");
@@ -168,6 +176,33 @@ export const AddReservasModal = ({
     });
     setError(null);
     onClose();
+  };
+
+  // Function to check if a room is available for the selected dates
+  const isCuartoAvailableForDates = (cuartoId: number, fechaEntrada: string, fechaSalida: string): boolean => {
+    // If dates are not selected, consider all rooms as available
+    if (!fechaEntrada || !fechaSalida) {
+      return true;
+    }
+
+    const selectedStart = new Date(fechaEntrada);
+    const selectedEnd = new Date(fechaSalida);
+
+    // Check if any non-cancelled reservation overlaps with the selected date range
+    for (const reserva of reservas) {
+      if (reserva.cuartoId === cuartoId && reserva.estado !== "Cancelada") {
+        const existingStart = new Date(reserva.fechaEntrada);
+        const existingEnd = new Date(reserva.fechaSalida);
+
+        // Check for overlap: ranges overlap if NOT (selectedEnd <= existingStart OR selectedStart >= existingEnd)
+        const hasOverlap = !(selectedEnd <= existingStart || selectedStart >= existingEnd);
+        if (hasOverlap) {
+          return false; // Room is not available due to existing reservation
+        }
+      }
+    }
+
+    return true; // Room is available
   };
 
   // Calcular el precio total automáticamente
@@ -262,15 +297,17 @@ export const AddReservasModal = ({
                   size="sm"
                 >
                   <option value="">Seleccionar cuarto...</option>
-                  {cuartos.map((c) => {
-                    const tipoLabel = c.tipo === 0 ? "Individual" : c.tipo === 1 ? "Doble" : c.tipo === 2 ? "Suite" : "Familiar";
-                    const estadoLabel = c.estado === 0 ? "Disponible" : c.estado === 1 ? "Ocupado" : c.estado === 2 ? "Mantenimiento" : "Limpieza";
-                    return (
-                      <option key={c.id} value={c.id}>
-                        Cuarto {c.numero} ({tipoLabel}) - ${c.precioPorNoche}/noche - {estadoLabel}
-                      </option>
-                    );
-                  })}
+                  {cuartos
+                    .filter((c) => isCuartoAvailableForDates(c.id, formData.fechaEntrada, formData.fechaSalida))
+                    .map((c) => {
+                      const tipoLabel = c.tipo === 0 ? "Individual" : c.tipo === 1 ? "Doble" : c.tipo === 2 ? "Suite" : "Familiar";
+                      const estadoLabel = c.estado === 0 ? "Disponible" : c.estado === 1 ? "Ocupado" : c.estado === 2 ? "Mantenimiento" : "Limpieza";
+                      return (
+                        <option key={c.id} value={c.id}>
+                          Cuarto {c.numero} ({tipoLabel}) - ${c.precioPorNoche}/noche - {estadoLabel}
+                        </option>
+                      );
+                    })}
                 </Select>
                 {formData.cuartoId > 0 && cuartosPorId[formData.cuartoId] && (
                   <Box mt={1} p={1.5} bg="blue.50" borderRadius="md" borderLeft="3px solid blue">
