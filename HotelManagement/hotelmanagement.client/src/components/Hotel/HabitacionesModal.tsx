@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { CuartoResponse } from "../../services/cuartosService";
 import { cuartosService } from "../../services/cuartosService";
+import { reservasService, type ReservaResponse } from "../../services/reservasService";
 import { useAuth } from "../../hooks/useAuth";
 import "../../styles/HabitacionesModal.css";
 
@@ -25,6 +26,7 @@ const tipoLabels: Record<number, string> = {
 
 export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) => {
   const [cuartos, setCuartos] = useState<CuartoResponse[]>([]);
+  const [reservas, setReservas] = useState<ReservaResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -39,20 +41,28 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
   });
   const { token } = useAuth();
 
-  // Cargar cuartos
+  // Cargar cuartos y reservas
   useEffect(() => {
     if (isOpen && token) {
-      loadCuartos();
+      loadData();
     }
   }, [isOpen, token]);
 
-  const loadCuartos = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await cuartosService.getAllCuartos(token!);
-      if (response.exito && response.datos) {
-        setCuartos(response.datos);
+      const [cuartosResponse, reservasResponse] = await Promise.all([
+        cuartosService.getAllCuartos(token!),
+        reservasService.getAllReservas(token!),
+      ]);
+      
+      if (cuartosResponse.exito && cuartosResponse.datos) {
+        setCuartos(cuartosResponse.datos);
+      }
+      
+      if (reservasResponse.exito && reservasResponse.datos) {
+        setReservas(reservasResponse.datos);
       }
     } catch (err) {
       setError("Error al cargar las habitaciones");
@@ -60,6 +70,43 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Calcula el estado actual de un cuarto basándose en sus reservas
+   * Si tiene una reserva activa hoy, muestra "Ocupado"
+   * Si está en mantenimiento o limpieza, mantiene ese estado
+   * Si no, muestra "Disponible"
+   */
+  const getActualEstadoCuarto = (cuarto: CuartoResponse): number => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Si el cuarto está en mantenimiento o limpieza, mantener ese estado
+    if (cuarto.estado === 2 || cuarto.estado === 3) {
+      return cuarto.estado;
+    }
+
+    // Buscar si hay una reserva activa (en curso) para este cuarto
+    const reservaActiva = reservas.find((reserva) => {
+      if (reserva.estado === "Cancelada") return false;
+      if (reserva.cuartoId !== cuarto.id) return false;
+
+      const fechaEntrada = new Date(reserva.fechaEntrada);
+      const fechaSalida = new Date(reserva.fechaSalida);
+      
+      fechaEntrada.setHours(0, 0, 0, 0);
+      fechaSalida.setHours(0, 0, 0, 0);
+
+      // Está ocupado si hoy está entre entrada y salida (exclusive en salida)
+      return today >= fechaEntrada && today < fechaSalida;
+    });
+
+    if (reservaActiva) {
+      return 1; // Ocupado
+    }
+
+    return 0; // Disponible
   };
 
   const handleEditClick = (cuarto: CuartoResponse) => {
@@ -106,7 +153,7 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
         await cuartosService.createCuarto(formData, token!);
       }
 
-      await loadCuartos();
+      await loadData();
       setShowForm(false);
       setEditingId(null);
     } catch (err) {
@@ -119,7 +166,7 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
     if (window.confirm("¿Estás seguro de que deseas eliminar esta habitación?")) {
       try {
         await cuartosService.deleteCuarto(id, token!);
-        await loadCuartos();
+        await loadData();
       } catch (err) {
         setError("Error al eliminar la habitación");
         console.error(err);
@@ -245,13 +292,15 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
         {!showForm && !loading && (
           <div className="habitaciones-container">
             <div className="habitaciones-grid">
-              {cuartos.map((cuarto) => (
+              {cuartos.map((cuarto) => {
+                const estadoActual = getActualEstadoCuarto(cuarto);
+                return (
                 <div key={cuarto.id} className="habitacion-card">
                   {/* Estado Indicator */}
                   <div
                     className="habitacion-estado-indicator"
-                    style={{ backgroundColor: estadoColors[cuarto.estado].color }}
-                    title={estadoColors[cuarto.estado].label}
+                    style={{ backgroundColor: estadoColors[estadoActual].color }}
+                    title={estadoColors[estadoActual].label}
                   />
 
                   {/* Room Number */}
@@ -273,7 +322,7 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
                     </div>
                     <div className="info-row">
                       <span className="label">Estado:</span>
-                      <span className="value">{estadoColors[cuarto.estado].label}</span>
+                      <span className="value">{estadoColors[estadoActual].label}</span>
                     </div>
                   </div>
 
@@ -300,7 +349,8 @@ export const HabitacionesModal = ({ isOpen, onClose }: HabitacionesModalProps) =
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {cuartos.length === 0 && !loading && (

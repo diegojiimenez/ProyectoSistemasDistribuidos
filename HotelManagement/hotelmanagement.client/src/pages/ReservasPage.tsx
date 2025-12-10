@@ -130,8 +130,9 @@ export const ReservasPage = () => {
           cuartoId: parseInt(String(reserva.cuartoId)),
           fechaEntrada: reserva.fechaEntrada,
           fechaSalida: reserva.fechaSalida,
+          numeroPersonas: parseInt(String(reserva.numeroPersonas)),
           precioTotal: parseFloat(String(reserva.precioTotal)),
-          notas: reserva.notas,
+          notas: reserva.observaciones,
         };
         setEditingReserva(editData);
         setIsModalOpen(true);
